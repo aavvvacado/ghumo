@@ -12,11 +12,11 @@
 
 ---
 
-## 📌 Submission Overview (75way Recruit & CRPC KIET)
+## 📌 Submission Overview (75way Recruit )
 
 This repository is unified as a **single public monorepo** housing both the production-ready **Frontend** application and the scalable **Backend** API services, adhering strictly to the recruitment drive guidelines.
 
-- **Candidate**: Ashutosh ([@aavvvacado](https://github.com/aavvvacado))
+- **Candidate**: Vishal ([@aavvvacado](https://github.com/aavvvacado))
 - **Institution**: KIET Group of Institutions
 - **Drive**: 75way Recruit
 - **Repository Structure**:
@@ -266,6 +266,6 @@ Press:
 
 ## 📄 License & Contact
 
-- **Author**: Ashutosh ([@aavvvacado](https://github.com/aavvvacado))
-- **Email**: ashking.vp123@gmail.com
+- **Author**: Vishal ([@aavvvacado](https://github.com/aavvvacado))
+- **Email**: vpratapsingh099@gmail.com (ghub: ashking.vp123@gmail.com)
 - **License**: MIT License
