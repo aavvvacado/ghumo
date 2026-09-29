@@ -1,0 +1,169 @@
+from transformers import pipeline
+from app.utils.config import settings
+import httpx
+from groq import AsyncGroq
+import logging
+
+logger = logging.getLogger(__name__)
+
+class AIService:
+    def __init__(self):
+        self.source = settings.AI_SOURCE
+        self.model_name = settings.AI_MODEL_NAME
+        self.pipeline = None
+        self.groq_client = None
+        if self.source == "groq" and settings.GROQ_API_KEY:
+            self.groq_client = AsyncGroq(api_key=settings.GROQ_API_KEY, timeout=60.0)
+
+    def _get_pipeline(self):
+        if self.pipeline is None and self.source == "huggingface":
+            try:
+                self.pipeline = pipeline("text-generation", model="gpt2")
+            except Exception as e:
+                logger.error(f"Failed to load HF pipeline: {e}")
+        return self.pipeline
+
+    async def _generate_ollama(self, prompt: str, system_prompt: str) -> str:
+        """Internal helper for Ollama generation."""
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    f"{settings.OLLAMA_BASE_URL}/api/generate",
+                    json={
+                        "model": self.model_name,
+                        "prompt": f"{system_prompt}\n\nUser: {prompt}",
+                        "stream": False
+                    },
+                    timeout=60.0 # Increased timeout for local LLM
+                )
+                if response.status_code != 200:
+                    raise Exception(f"Ollama returned {response.status_code}")
+                return response.json().get("response")
+        except Exception as e:
+            logger.error(f"Ollama generation failed: {e}")
+            return f"Error via Ollama: {str(e)}"
+
+    async def _generate_gemini(self, prompt: str, system_prompt: str) -> str:
+        """Internal helper for Gemini API generation with multi-model fallback."""
+        candidate_models = [
+            settings.GEMINI_MODEL_NAME,
+            "gemini-3.5-flash-lite",
+            "gemini-3.1-flash-lite",
+            "gemini-3.8-flash",
+            "gemini-3.7-flash",
+            "gemini-3.6-flash",
+            "gemini-3.5-flash",
+            "gemini-flash-lite-latest",
+            "gemini-2.5-flash",
+            "gemini-2.0-flash",
+            "gemini-1.5-flash",
+            "gemini-2.5-flash-lite",
+        ]
+        candidate_models = list(dict.fromkeys([m for m in candidate_models if m]))
+
+        last_error = None
+        for model in candidate_models:
+            try:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+                headers = {
+                    "Content-Type": "application/json",
+                    "x-goog-api-key": settings.GEMINI_API_KEY
+                }
+                payload = {
+                    "contents": [{"parts": [{"text": prompt}]}],
+                    "generationConfig": {
+                        "temperature": 0.7,
+                        "maxOutputTokens": 8192
+                    }
+                }
+                if "JSON" in prompt or "json" in prompt.lower() or (system_prompt and "json" in system_prompt.lower()):
+                    payload["generationConfig"]["responseMimeType"] = "application/json"
+
+                if system_prompt:
+                    payload["systemInstruction"] = {"parts": [{"text": system_prompt}]}
+
+                async with httpx.AsyncClient() as client:
+                    response = await client.post(url, headers=headers, json=payload, timeout=60.0)
+                    if response.status_code == 200:
+                        res_data = response.json()
+                        candidates = res_data.get("candidates", [])
+                        if candidates:
+                            parts = candidates[0].get("content", {}).get("parts", [])
+                            if parts:
+                                return parts[0].get("text", "")
+                        return ""
+                    else:
+                        logger.warning(f"Gemini model '{model}' returned status {response.status_code}. Retrying with fallback model...")
+                        last_error = f"Gemini API returned {response.status_code}: {response.text}"
+            except Exception as e:
+                logger.warning(f"Gemini model '{model}' exception: {e}. Retrying with fallback model...")
+                last_error = str(e)
+
+        logger.error(f"All Gemini models failed. Last error: {last_error}")
+        return f"Error via Gemini: {last_error}"
+
+    async def generate_content(self, prompt: str, system_prompt: str = "You are a helpful travel assistant.") -> str:
+        """Generic method to generate content using the selected AI source."""
+        if self.source == "gemini" and settings.GEMINI_API_KEY:
+            res = await self._generate_gemini(prompt, system_prompt)
+            if not res.startswith("Error via Gemini:"):
+                return res
+            # Fallback to Groq if Gemini quotas are exhausted
+            if self.groq_client:
+                logger.warning("Gemini models failed/exhausted. Falling back to Groq...")
+                try:
+                    completion = await self.groq_client.chat.completions.create(
+                        model=settings.GROQ_MODEL_NAME,
+                        messages=[
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": prompt}
+                        ],
+                        temperature=0.7,
+                        max_tokens=4096,
+                        response_format={"type": "json_object"}
+                    )
+                    return completion.choices[0].message.content
+                except Exception as ge:
+                    logger.error(f"Groq fallback failed: {ge}")
+            return res
+
+        elif self.source == "groq" and self.groq_client:
+            try:
+                completion = await self.groq_client.chat.completions.create(
+                    model=settings.GROQ_MODEL_NAME,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": prompt}
+                    ],
+                    temperature=0.7,
+                    max_tokens=4096,
+                    response_format={"type": "json_object"}
+                )
+                return completion.choices[0].message.content
+            except Exception as e:
+                logger.error(f"Groq generation failed: {e}. Falling back to Ollama...")
+                # Automatic Fallback to Ollama
+                return await self._generate_ollama(prompt, system_prompt)
+
+        elif self.source == "ollama":
+            return await self._generate_ollama(prompt, system_prompt)
+
+        elif self.source == "huggingface":
+            # ... existing HF logic ...
+            pipe = self._get_pipeline()
+            if pipe:
+                try:
+                    full_prompt = f"{system_prompt}\n\nUser: {prompt}"
+                    summary = pipe(full_prompt, max_new_tokens=150, do_sample=False)
+                    return summary[0]['generated_text'].replace(full_prompt, "").strip()
+                except Exception as e:
+                    logger.error(f"HF generation failed: {e}")
+            
+        return "AI service unavailable or misconfigured."
+
+    async def summarize_itinerary(self, data: str):
+        prompt = f"Summarize this travel itinerary or data: {data}"
+        system_prompt = "You are a travel expert. Provide a concise, engaging summary in 3-4 sentences."
+        return await self.generate_content(prompt, system_prompt)
+
+ai_service = AIService()
