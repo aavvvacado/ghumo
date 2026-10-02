@@ -1,0 +1,53 @@
+<!-- KaTeX math typesetting engine -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous" onload="renderGhumoMath()"></script>
+
+<style>
+  /* KaTeX mathematical typesetting styling & responsiveness */
+  .katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.75em 0;
+    margin: 1.2em 0;
+    -webkit-overflow-scrolling: touch;
+  }
+  .katex-display::-webkit-scrollbar {
+    height: 4px;
+  }
+  .katex-display::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+  }
+  [data-theme="light"] .katex-display::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+  }
+  .katex {
+    font-size: 1.05em;
+    color: inherit;
+  }
+</style>
+
+<script>
+  function renderGhumoMath() {
+    if (typeof renderMathInElement === 'function') {
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '\\[', right: '\\]', display: true },
+          { left: '$', right: '$', display: false },
+          { left: '\\(', right: '\\)', display: false }
+        ],
+        ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code', 'option'],
+        ignoredClasses: ['no-math'],
+        throwOnError: false
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderGhumoMath);
+  } else {
+    renderGhumoMath();
+  }
+</script>

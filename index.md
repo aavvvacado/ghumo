@@ -95,13 +95,13 @@ This documentation suite serves as an exhaustive engineering handbook for onboar
 
 | Engineering Pillar | Implementation Mechanism | Telemetry & Verified Evidence |
 | :--- | :--- | :---: |
-| **Decoupled Fast Search** | 4-tier resolution pipeline: Valkey RAM cache $\rightarrow$ PostgreSQL `AIContext` $\rightarrow$ Anchor Landmark elevation $\rightarrow$ Regional POI match $\rightarrow$ Live multi-source fallback. | **< 48ms cache response** |
+| **Decoupled Fast Search** | 4-tier resolution pipeline: Valkey RAM cache → PostgreSQL `AIContext` → Anchor Landmark elevation → Regional POI match → Live multi-source fallback. | **< 48ms cache response** |
 | **Multi-Modal Video Miner** | Translates YouTube travel vlogs (and Instagram Reels/TikToks) into structured day-wise itineraries with real GPS coordinates via `transcriptapi.com` and LLM parsing. | **Tested across 50+ travel vlogs** |
 | **Zero-Watermark Dark Map** | High-performance Leaflet.js rendered in `react-native-webview` with custom CSS charcoal invert filters (`#1B1918`), glowing pulse beacons, and zero Google Maps API keys. | **0 API billing cost / 60 FPS gestures** |
 | **Anchor Landmark Collision** | Elevates and prepends specific matched POIs (e.g. `KIET Group of Institutions`) to the front of their parent city context (`Muradnagar`) with zero card collisions. | **100% collision-free deduplication** |
 | **Zero-Hallucination Images** | Strips fictional AI pictures in favor of real-world Creative Commons photography resolved concurrently from Wikimedia Commons, Wikidata, and Unsplash API. | **< 300ms concurrent batch resolution** |
 | **Bayesian Confidence Engine** | Combines physical OSM presence (+0.4), YouTube (+0.2), Reddit (+0.2), and blogs (+0.2) with crowdsourced Local Captain submissions and Bayesian rating smoothing. | **Self-updating knowledge merge** |
-| **Live SSE Progress Streaming** | Unidirectional Server-Sent Events (`/search/stream`, `/itinerary/stream`) emit real-time discovery milestones (`init` $\rightarrow$ `mining` $\rightarrow$ `osm_complete` $\rightarrow$ `complete`). | **Zero UI freeze during 8s live scans** |
+| **Live SSE Progress Streaming** | Unidirectional Server-Sent Events (`/search/stream`, `/itinerary/stream`) emit real-time discovery milestones (`init` → `mining` → `osm_complete` → `complete`). | **Zero UI freeze during 8s live scans** |
 | **Dynamic Morphing UI** | Multi-state `DynamicBottomBar` and gravity `MapPlaceCarousel` built on React Native & Expo SDK 57 with smooth Warm Ivory (`#ECE8E1`) and Dark Charcoal (`#191816`) themes. | **0 TypeScript errors (`tsc --noEmit`)** |
 
 ---

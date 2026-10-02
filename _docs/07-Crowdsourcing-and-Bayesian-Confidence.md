@@ -83,24 +83,24 @@ When background crawlers or community captains report updated information for an
 ### The Smart Merge Algorithm (`knowledge_updater.py`)
 ```python
 def smart_merge_place(existing_place: Place, new_data: dict, db: Session):
- old_confidence = existing_place.confidence_score or 0.0
- new_confidence = calculate_confidence(new_data)
- 
- # 1. Update core fields ONLY if new confidence exceeds existing confidence
- if new_confidence >= old_confidence:
- existing_place.confidence_score = new_confidence
- if new_data.get("description") and len(new_data["description"]) > len(existing_place.description or ""):
- existing_place.description = new_data["description"]
- if new_data.get("category"):
- existing_place.category = new_data["category"]
- 
- # 2. Cumulative increment of source citations
- existing_place.source_count = (existing_place.source_count or 1) + 1
- existing_place.updated_at = datetime.utcnow()
- 
- db.commit()
- db.refresh(existing_place)
- return existing_place
+    old_confidence = existing_place.confidence_score or 0.0
+    new_confidence = calculate_confidence(new_data)
+    
+    # 1. Update core fields ONLY if new confidence exceeds existing confidence
+    if new_confidence >= old_confidence:
+        existing_place.confidence_score = new_confidence
+        if new_data.get("description") and len(new_data["description"]) > len(existing_place.description or ""):
+            existing_place.description = new_data["description"]
+        if new_data.get("category"):
+            existing_place.category = new_data["category"]
+            
+    # 2. Cumulative increment of source citations
+    existing_place.source_count = (existing_place.source_count or 1) + 1
+    existing_place.updated_at = datetime.utcnow()
+    
+    db.commit()
+    db.refresh(existing_place)
+    return existing_place
 ```
 
 This guarantee ensures that:

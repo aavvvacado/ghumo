@@ -171,7 +171,7 @@ ghumo/
 | Attribute | Design Decision | Engineering Rationale |
 | :--- | :--- | :--- |
 | **Responsiveness** | 4-Tier Resolution with in-memory caching | Returning cached destinations in `< 50ms` ensures instant search gratification while background tasks synthesize un-cached cities. |
-| **Cost Efficiency** | Leaflet.js + OSM in WebView | Eliminates Google Maps JavaScript and Places API costs ($7.00 per 1,000 requests), preventing budget exhaustion. |
+| **Cost Efficiency** | Leaflet.js + OSM in WebView | Eliminates Google Maps JavaScript and Places API costs (\$7.00 per 1,000 requests), preventing budget exhaustion. |
 | **Trustworthiness** | Real Creative Commons image resolution | Prevents user disillusionment caused by AI-hallucinated fantasy pictures of real-world historical sites. |
 | **Fault Isolation** | In-process `asyncio.create_task` fallbacks | System functions seamlessly even if external Celery worker processes or Redis daemons are temporarily offline. |
 | **Cross-Platform Parity** | Pure Expo React Native codebase | 100% of application logic, gestures, and styling run identically on Android, iOS, and Mobile Web browsers. |

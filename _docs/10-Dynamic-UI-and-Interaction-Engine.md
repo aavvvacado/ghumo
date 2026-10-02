@@ -13,7 +13,7 @@ This document explores the client-side interaction engine and component architec
 
 ## 1. Interaction Design Philosophy: The Ambient Canvas
 
-Most travel applications navigate between rigid, full-page screen hierarchies (Search Page $\to$ Place List Page $\to$ Detail Page $\to$ Fullscreen Map Page). Each transition drops the user's spatial mental model and incurs noticeable loading latency.
+Most travel applications navigate between rigid, full-page screen hierarchies (Search Page → Place List Page → Detail Page → Fullscreen Map Page). Each transition drops the user's spatial mental model and incurs noticeable loading latency.
 
 Ghumo adheres to the **Ambient Canvas Paradigm**:
 1. **The Map is Always Alive**: The Leaflet WebView canvas remains continuously mounted at Layer 1. It is never destroyed or reloaded during user interactions.

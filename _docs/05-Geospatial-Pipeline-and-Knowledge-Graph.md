@@ -87,9 +87,9 @@ $$\Delta\phi = \phi_2 - \phi_1, \quad \Delta\lambda = \lambda_2 - \lambda_1$$
 
 $$a = \sin^2\left(\frac{\Delta\phi}{2}\right) + \cos(\phi_1)\cos(\phi_2)\sin^2\left(\frac{\Delta\lambda}{2}\right)$$
 
-$$c = 2 \cdot \arctan2\left(\sqrt{a}, \sqrt{1 - a}\right)$$
+$$c = 2 \cdot \operatorname{atan2}\left(\sqrt{a}, \sqrt{1 - a}\right)$$
 
-$$d = R \cdot c \quad \text{where } R = 6371000\text{ meters}$$
+$$d = R \cdot c \quad \text{where } R = 6{,}371{,}000\text{ meters}$$
 
 ### Entity Edge Taxonomy
 The system populates the `PlaceRelation` table with typed spatial and contextual edges:

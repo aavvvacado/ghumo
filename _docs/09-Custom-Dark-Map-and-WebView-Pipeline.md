@@ -17,7 +17,7 @@ In standard mobile travel applications, developers default to `react-native-maps
 
 1. **The Google Cloud Key Wall**: On Android devices running Expo Go, Google Maps displays an empty beige grid unless a valid Google Cloud API key with Maps SDK enabled and billing attached is compiled into the binary.
 2. **Restrictive Watermarks & Branding**: Commercial providers force large watermarks, copyright banners, and intrusive vendor logos directly over the viewport.
-3. **High Tile Metering Costs**: Mapbox and Google Maps charge steep per-session and per-tile rates ($2.00 to $7.00 per 1,000 dynamic map loads).
+3. **High Tile Metering Costs**: Mapbox and Google Maps charge steep per-session and per-tile rates (\$2.00 to \$7.00 per 1,000 dynamic map loads).
 
 ### The Ghumo Engineering Solution
 Ghumo embeds **Leaflet 1.9.4** inside a native **`react-native-webview`** container fed by official **OpenStreetMap (OSM)** raster tiles.

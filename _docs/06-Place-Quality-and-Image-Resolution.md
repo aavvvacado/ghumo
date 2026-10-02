@@ -17,7 +17,7 @@ When modern AI travel apps integrate generative image models (DALL-E, Midjourney
 - An AI image of *India Gate* might display five minarets or gothic spires.
 - An AI image of *Varanasi Ghats* might depict Mediterranean villas.
 
-For an engineering-grade travel companion, synthetic visual hallucinations destroy user credibility. Conversely, querying commercial image APIs (like Google Places Photos API) incurs heavy billing costs ($7.00 per 1,000 photo references), quickly exhausting infrastructure budgets.
+For an engineering-grade travel companion, synthetic visual hallucinations destroy user credibility. Conversely, querying commercial image APIs (like Google Places Photos API) incurs heavy billing costs (\$7.00 per 1,000 photo references), quickly exhausting infrastructure budgets.
 
 Ghumo adheres to a **Zero-Hallucination Visual Architecture**:
 1. All images are **100% authentic, real-world photographs**.
