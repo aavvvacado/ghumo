@@ -34,11 +34,11 @@ This repository is unified as a **single public monorepo** housing both the prod
 
 ```mermaid
 flowchart LR
-    subgraph Repo ["Ghumo Monorepo (GitHub: aavvvacado/ghumo)"]
-        FE["frontend/\n- Expo SDK 57 / React Native\n- Leaflet.js WebView\n- TypeScript Strict Mode"]
-        BE["backend/\n- FastAPI ASGI :8000\n- Supabase PostgreSQL\n- Valkey / Redis RAM Cache"]
-        DE["demos/\n- Walkthrough MP4 (demos/samples)\n- High-Res Screen Captures"]
-    end
+ subgraph Repo ["Ghumo Monorepo (GitHub: aavvvacado/ghumo)"]
+ FE["frontend/\n- Expo SDK 57 / React Native\n- Leaflet.js WebView\n- TypeScript Strict Mode"]
+ BE["backend/\n- FastAPI ASGI :8000\n- Supabase PostgreSQL\n- Valkey / Redis RAM Cache"]
+ DE["demos/\n- Walkthrough MP4 (demos/samples)\n- High-Res Screen Captures"]
+ end
 ```
 
 | Evaluation Rubric | Implementation Highlight | Verification Evidence |
@@ -55,41 +55,41 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-    subgraph ClientLayer ["1. Presentation Layer (Mobile & Web)"]
-        UI["React Native Interface\n- DynamicBottomBar (Morphing Pills)\n- MapPlaceCarousel (Downward Gravity)\n- Warm Ivory & Dark Charcoal Shaders"]
-        LeafletMap["Custom Dark Map Engine\n- react-native-webview\n- Leaflet 1.9.4 + OpenStreetMap Tiles\n- Hardware CSS Invert Filter"]
-        UserGPS["Geolocation Sensor\n- expo-location\n- Real-time Pulsing Radar Beacon"]
-    end
+ subgraph ClientLayer ["1. Presentation Layer (Mobile & Web)"]
+ UI["React Native Interface\n- DynamicBottomBar (Morphing Pills)\n- MapPlaceCarousel (Downward Gravity)\n- Warm Ivory & Dark Charcoal Shaders"]
+ LeafletMap["Custom Dark Map Engine\n- react-native-webview\n- Leaflet 1.9.4 + OpenStreetMap Tiles\n- Hardware CSS Invert Filter"]
+ UserGPS["Geolocation Sensor\n- expo-location\n- Real-time Pulsing Radar Beacon"]
+ end
 
-    subgraph APILayer ["2. Gateway & Routing Layer (FastAPI :8000)"]
-        API["FastAPI ASGI Server\n- Windows Proactor & Linux Epoll\n- CORS / Global Error Middleware"]
-        SSEStreamer["SSE Event Engine\n- /search/stream\n- /itinerary/stream"]
-    end
+ subgraph APILayer ["2. Gateway & Routing Layer (FastAPI :8000)"]
+ API["FastAPI ASGI Server\n- Windows Proactor & Linux Epoll\n- CORS / Global Error Middleware"]
+ SSEStreamer["SSE Event Engine\n- /search/stream\n- /itinerary/stream"]
+ end
 
-    subgraph CacheDBLayer ["3. Storage & In-Memory Tiers"]
-        ValkeyCache[("Valkey / Redis RAM Cache\n- Sub-millisecond Key-Value Store\n- Hot Promotion Pipeline")]
-        PostgresDB[("Supabase PostgreSQL\n- Places & HiddenGems Tables\n- AIContext & TravelTips\n- TargetFeedback (Bayesian)")]
-    end
+ subgraph CacheDBLayer ["3. Storage & In-Memory Tiers"]
+ ValkeyCache[("Valkey / Redis RAM Cache\n- Sub-millisecond Key-Value Store\n- Hot Promotion Pipeline")]
+ PostgresDB[("Supabase PostgreSQL\n- Places & HiddenGems Tables\n- AIContext & TravelTips\n- TargetFeedback (Bayesian)")]
+ end
 
-    subgraph IntelligenceLayer ["4. Intelligence & Crawler Engine"]
-        LLM["Context Reasoner\n- Google Gemini 2.5/2.0 Flash\n- Groq Llama-3-70B Fallback"]
-        Overpass["OSM Overpass Service\n- 8km Radius Spatial Bounding Query\n- Amenity & Tourism Nodes"]
-        YTMiner["Vlog Transcript Miner\n- TranscriptAPI.com + YouTube API\n- Spoken Landmark Timestamp Matcher"]
-        ImgResolver["Place Image Resolver\n- Wikimedia Commons API\n- Wikidata SPARQL & Unsplash"]
-        QualityValidator["Place Quality Validator\n- Coordinate Sanity & Name Deduplication"]
-    end
+ subgraph IntelligenceLayer ["4. Intelligence & Crawler Engine"]
+ LLM["Context Reasoner\n- Google Gemini 2.5/2.0 Flash\n- Groq Llama-3-70B Fallback"]
+ Overpass["OSM Overpass Service\n- 8km Radius Spatial Bounding Query\n- Amenity & Tourism Nodes"]
+ YTMiner["Vlog Transcript Miner\n- TranscriptAPI.com + YouTube API\n- Spoken Landmark Timestamp Matcher"]
+ ImgResolver["Place Image Resolver\n- Wikimedia Commons API\n- Wikidata SPARQL & Unsplash"]
+ QualityValidator["Place Quality Validator\n- Coordinate Sanity & Name Deduplication"]
+ end
 
-    UI <-->|"REST API & SSE Streams"| API
-    UserGPS --> UI
-    UI <-->|"postMessage / injectJS Bridge"| LeafletMap
-    API --> SSEStreamer
-    API <--> ValkeyCache
-    API <--> PostgresDB
-    API --> LLM
-    API --> Overpass
-    API --> YTMiner
-    LLM --> ImgResolver
-    Overpass --> QualityValidator
+ UI <-->|"REST API & SSE Streams"| API
+ UserGPS --> UI
+ UI <-->|"postMessage / injectJS Bridge"| LeafletMap
+ API --> SSEStreamer
+ API <--> ValkeyCache
+ API <--> PostgresDB
+ API --> LLM
+ API --> Overpass
+ API --> YTMiner
+ LLM --> ImgResolver
+ Overpass --> QualityValidator
 ```
 
 ---
@@ -100,68 +100,68 @@ The monorepo enforces clean domain boundaries across mobile, backend, and docume
 
 ```
 ghumo/
-├── frontend/                         # Expo SDK 57 React Native Application
-│   ├── assets/                       # Custom brand iconography, fonts, and assets
-│   ├── src/
-│   │   ├── app/                      # Expo Router application entry
-│   │   │   ├── _layout.tsx           # App-wide context providers & layout hierarchy
-│   │   │   └── index.tsx             # Root home screen coordinating layers 1 through 6
-│   │   ├── components/               # Clean reusable UI components
-│   │   │   ├── auth/                 # BrandHeader, AuthCard, AuthLoadingOverlay
-│   │   │   ├── common/               # ExitConfirmationModal, GlassCard, StatusPill
-│   │   │   ├── home/                 # DynamicBottomBar, MapBackground, MapPlaceCarousel,
-│   │   │   │                         # PromptView, SearchView, HomeTopBar
-│   │   │   └── ui/                   # Button, TextInput, Icon components
-│   │   ├── constants/                # Palette definitions (Warm Ivory, Dark Charcoal)
-│   │   ├── context/                  # State management providers
-│   │   │   ├── authContext.tsx       # Supabase Auth session & guest state
-│   │   │   ├── themeContext.tsx      # Dark / light theme & opacity animation state
-│   │   │   └── homeContext.tsx       # Search query, map visibility, and bottom sheet state
-│   │   ├── domain/                   # TypeScript interfaces & domain contracts
-│   │   ├── hooks/                    # Custom React hooks (location, debouncing, animations)
-│   │   └── utils/                    # Logger, math utilities, and coordinate helpers
-│   ├── app.json                      # Expo application manifest
-│   ├── package.json                  # NPM dependencies and build scripts
-│   └── tsconfig.json                 # TypeScript strict configuration
+├── frontend/ # Expo SDK 57 React Native Application
+│ ├── assets/ # Custom brand iconography, fonts, and assets
+│ ├── src/
+│ │ ├── app/ # Expo Router application entry
+│ │ │ ├── _layout.tsx # App-wide context providers & layout hierarchy
+│ │ │ └── index.tsx # Root home screen coordinating layers 1 through 6
+│ │ ├── components/ # Clean reusable UI components
+│ │ │ ├── auth/ # BrandHeader, AuthCard, AuthLoadingOverlay
+│ │ │ ├── common/ # ExitConfirmationModal, GlassCard, StatusPill
+│ │ │ ├── home/ # DynamicBottomBar, MapBackground, MapPlaceCarousel,
+│ │ │ │ # PromptView, SearchView, HomeTopBar
+│ │ │ └── ui/ # Button, TextInput, Icon components
+│ │ ├── constants/ # Palette definitions (Warm Ivory, Dark Charcoal)
+│ │ ├── context/ # State management providers
+│ │ │ ├── authContext.tsx # Supabase Auth session & guest state
+│ │ │ ├── themeContext.tsx # Dark / light theme & opacity animation state
+│ │ │ └── homeContext.tsx # Search query, map visibility, and bottom sheet state
+│ │ ├── domain/ # TypeScript interfaces & domain contracts
+│ │ ├── hooks/ # Custom React hooks (location, debouncing, animations)
+│ │ └── utils/ # Logger, math utilities, and coordinate helpers
+│ ├── app.json # Expo application manifest
+│ ├── package.json # NPM dependencies and build scripts
+│ └── tsconfig.json # TypeScript strict configuration
 │
-├── backend/                          # FastAPI Python Application
-│   ├── app/
-│   │   ├── api/                      # Routing & request schemas
-│   │   │   ├── router.py             # Route declarations (/search, /itinerary, /recommendations)
-│   │   │   └── schemas.py            # Pydantic v2 validation contracts
-│   │   ├── crawlers/                 # Multi-source web scraping engine
-│   │   │   ├── cloudflare_crawler.py # Headless scraping with anti-bot bypass
-│   │   │   └── blog_crawler.py       # Indian travel blog text extractor
-│   │   ├── database/                 # Persistence layer
-│   │   │   ├── models.py             # SQLAlchemy ORM models (Place, HiddenGem, AIContext)
-│   │   │   └── session.py            # Database engine and sequence synchronizer
-│   │   ├── services/                 # Business logic & microservices
-│   │   │   ├── enrichment_service.py # 4-tier resolution & anchor landmark collision handler
-│   │   │   ├── search_service.py     # Aggregated search coordinator
-│   │   │   ├── itinerary_service.py  # Day-wise itinerary planner & chunked scheduler
-│   │   │   ├── youtube_service.py    # Vlog transcript miner & timestamp parser
-│   │   │   ├── social_mining.py      # Instagram Reels, TikTok, and video URL processor
-│   │   │   ├── osm_service.py        # Nominatim geocoding & Overpass 8km scan
-│   │   │   ├── knowledge_graph_service.py # Spatial Haversine relational graph
-│   │   │   ├── place_image_resolver.py   # Multi-source Creative Commons image pipeline
-│   │   │   ├── place_quality_validator.py # Anti-hallucination name & coordinate validator
-│   │   │   ├── feedback_service.py   # Bayesian weighted scoring engine
-│   │   │   ├── cache_service.py      # Valkey / Redis async connection manager
-│   │   │   └── discovery_agent.py    # Autonomous background city registry scanner
-│   │   ├── tasks/                    # Celery asynchronous task definitions
-│   │   │   └── miner_tasks.py        # Long-running background crawl workers
-│   │   ├── utils/                    # Global error handlers, configuration, and helpers
-│   │   ├── celery_app.py             # Celery worker initialization
-│   │   └── main.py                   # FastAPI lifespan application entry point
-│   ├── tests/                        # Pytest integration and unit tests
-│   ├── requirements.txt              # Production Python dependencies
-│   └── pyproject.toml                # Package configuration
+├── backend/ # FastAPI Python Application
+│ ├── app/
+│ │ ├── api/ # Routing & request schemas
+│ │ │ ├── router.py # Route declarations (/search, /itinerary, /recommendations)
+│ │ │ └── schemas.py # Pydantic v2 validation contracts
+│ │ ├── crawlers/ # Multi-source web scraping engine
+│ │ │ ├── cloudflare_crawler.py # Headless scraping with anti-bot bypass
+│ │ │ └── blog_crawler.py # Indian travel blog text extractor
+│ │ ├── database/ # Persistence layer
+│ │ │ ├── models.py # SQLAlchemy ORM models (Place, HiddenGem, AIContext)
+│ │ │ └── session.py # Database engine and sequence synchronizer
+│ │ ├── services/ # Business logic & microservices
+│ │ │ ├── enrichment_service.py # 4-tier resolution & anchor landmark collision handler
+│ │ │ ├── search_service.py # Aggregated search coordinator
+│ │ │ ├── itinerary_service.py # Day-wise itinerary planner & chunked scheduler
+│ │ │ ├── youtube_service.py # Vlog transcript miner & timestamp parser
+│ │ │ ├── social_mining.py # Instagram Reels, TikTok, and video URL processor
+│ │ │ ├── osm_service.py # Nominatim geocoding & Overpass 8km scan
+│ │ │ ├── knowledge_graph_service.py # Spatial Haversine relational graph
+│ │ │ ├── place_image_resolver.py # Multi-source Creative Commons image pipeline
+│ │ │ ├── place_quality_validator.py # Anti-hallucination name & coordinate validator
+│ │ │ ├── feedback_service.py # Bayesian weighted scoring engine
+│ │ │ ├── cache_service.py # Valkey / Redis async connection manager
+│ │ │ └── discovery_agent.py # Autonomous background city registry scanner
+│ │ ├── tasks/ # Celery asynchronous task definitions
+│ │ │ └── miner_tasks.py # Long-running background crawl workers
+│ │ ├── utils/ # Global error handlers, configuration, and helpers
+│ │ ├── celery_app.py # Celery worker initialization
+│ │ └── main.py # FastAPI lifespan application entry point
+│ ├── tests/ # Pytest integration and unit tests
+│ ├── requirements.txt # Production Python dependencies
+│ └── pyproject.toml # Package configuration
 │
-├── demos/                            # Submission media & visual proof
-│   └── samples/                      # High-resolution screenshots and walkthrough MP4
+├── demos/ # Submission media & visual proof
+│ └── samples/ # High-resolution screenshots and walkthrough MP4
 │
-├── .gitignore                        # Unified multi-language exclusion rules
-└── README.md                         # Monorepo technical documentation
+├── .gitignore # Unified multi-language exclusion rules
+└── README.md # Monorepo technical documentation
 ```
 
 ---

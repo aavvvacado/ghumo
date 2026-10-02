@@ -24,18 +24,18 @@ Ghumo embeds **Leaflet 1.9.4** inside a native **`react-native-webview`** contai
 
 ```mermaid
 flowchart LR
-    RN["React Native Native Thread\n(MapBackground.tsx)"] <-->|"Bidirectional Bridge\n(injectJavaScript / postMessage)"| WV["react-native-webview Container\n(Hardware Accelerated)"]
-    
-    subgraph WebViewDOM ["Internal HTML5 / WebGL Canvas"]
-        L["Leaflet.js 1.9.4 Engine"]
-        Tiles["OpenStreetMap Raster Tiles\n(tile.openstreetmap.org/{z}/{x}/{y}.png)"]
-        Shader["Custom CSS Charcoal Dark Filter\ninvert(100%) hue-rotate(180deg)..."]
-        Beacon["Pulsing Radar Beacon (@keyframes pulse)"]
-        
-        Tiles --> Shader --> L
-        Beacon --> L
-    end
-    WV --> RN
+ RN["React Native Native Thread\n(MapBackground.tsx)"] <-->|"Bidirectional Bridge\n(injectJavaScript / postMessage)"| WV["react-native-webview Container\n(Hardware Accelerated)"]
+ 
+ subgraph WebViewDOM ["Internal HTML5 / WebGL Canvas"]
+ L["Leaflet.js 1.9.4 Engine"]
+ Tiles["OpenStreetMap Raster Tiles\n(tile.openstreetmap.org/{z}/{x}/{y}.png)"]
+ Shader["Custom CSS Charcoal Dark Filter\ninvert(100%) hue-rotate(180deg)..."]
+ Beacon["Pulsing Radar Beacon (@keyframes pulse)"]
+ 
+ Tiles --> Shader --> L
+ Beacon --> L
+ end
+ WV --> RN
 ```
 
 ---
@@ -49,15 +49,15 @@ Rather than running an expensive custom vector tile server (e.g. Mapbox GL / Pla
 ```css
 /* Custom Charcoal Dark Shader injected into MapBackground WebView */
 .leaflet-tile-pane {
-    filter: invert(100%) hue-rotate(180deg) brightness(85%) contrast(92%);
-    -webkit-filter: invert(100%) hue-rotate(180deg) brightness(85%) contrast(92%);
+ filter: invert(100%) hue-rotate(180deg) brightness(85%) contrast(92%);
+ -webkit-filter: invert(100%) hue-rotate(180deg) brightness(85%) contrast(92%);
 }
 
 /* Background canvas color matching app root */
 body, #map {
-    background-color: #191816 !important;
-    margin: 0;
-    padding: 0;
+ background-color: #191816 !important;
+ margin: 0;
+ padding: 0;
 }
 ```
 
@@ -74,53 +74,53 @@ Communication between the React Native JavaScript runtime and Leaflet's DOM cont
 
 ```mermaid
 sequenceDiagram
-    autonumber
-    participant App as React Native (HomeContext)
-    participant WV as react-native-webview
-    participant Leaflet as Leaflet Map DOM
+ autonumber
+ participant App as React Native (HomeContext)
+ participant WV as react-native-webview
+ participant Leaflet as Leaflet Map DOM
 
-    Note over App,Leaflet: 1. Native -> WebView Commands
-    App->>WV: injectJavaScript("map.flyTo([28.6562, 77.2410], 15)")
-    WV->>Leaflet: Smooth GPU animation to target POI coordinates
-    
-    App->>WV: injectJavaScript("updateMarkers([...poiList])")
-    Leaflet->>Leaflet: Clear old pins, drop animated category markers
+ Note over App,Leaflet: 1. Native -> WebView Commands
+ App->>WV: injectJavaScript("map.flyTo([28.6562, 77.2410], 15)")
+ WV->>Leaflet: Smooth GPU animation to target POI coordinates
+ 
+ App->>WV: injectJavaScript("updateMarkers([...poiList])")
+ Leaflet->>Leaflet: Clear old pins, drop animated category markers
 
-    Note over Leaflet,App: 2. WebView -> Native Events
-    Leaflet->>WV: window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'PIN_CLICKED', id: 104 }))
-    WV->>App: onMessage handler captures payload
-    App->>App: Synchronize MapPlaceCarousel to card index 104
+ Note over Leaflet,App: 2. WebView -> Native Events
+ Leaflet->>WV: window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'PIN_CLICKED', id: 104 }))
+ WV->>App: onMessage handler captures payload
+ App->>App: Synchronize MapPlaceCarousel to card index 104
 ```
 
 ### Native-to-WebView Injection (`injectJavaScript`):
 ```typescript
 const panToLocation = (lat: number, lng: number, zoom = 15) => {
-  if (webViewRef.current) {
-    webViewRef.current.injectJavaScript(`
-      if (window.map) {
-        window.map.flyTo([${lat}, ${lng}], ${zoom}, {
-          animate: true,
-          duration: 1.2
-        });
-      }
-      true;
-    `);
-  }
+ if (webViewRef.current) {
+ webViewRef.current.injectJavaScript(`
+ if (window.map) {
+ window.map.flyTo([${lat}, ${lng}], ${zoom}, {
+ animate: true,
+ duration: 1.2
+ });
+ }
+ true;
+ `);
+ }
 };
 ```
 
 ### WebView-to-Native Callback (`onMessage`):
 ```typescript
 const handleWebViewMessage = (event: NativeSyntheticEvent<WebViewMessage>) => {
-  try {
-    const payload = JSON.parse(event.nativeEvent.data);
-    if (payload.type === 'MARKER_SELECTED') {
-      setSelectedPlace(payload.place);
-      logger.app('Map marker selected by user', payload.place.name);
-    }
-  } catch (err) {
-    logger.error('Failed to parse WebView bridge message', err);
-  }
+ try {
+ const payload = JSON.parse(event.nativeEvent.data);
+ if (payload.type === 'MARKER_SELECTED') {
+ setSelectedPlace(payload.place);
+ logger.app('Map marker selected by user', payload.place.name);
+ }
+ } catch (err) {
+ logger.error('Failed to parse WebView bridge message', err);
+ }
 };
 ```
 
@@ -133,32 +133,32 @@ When the client receives device GPS coordinates from `expo-location`, it injects
 
 ```html
 <div class="user-beacon-container">
-    <div class="radar-pulse"></div>
-    <div class="center-dot"></div>
+ <div class="radar-pulse"></div>
+ <div class="center-dot"></div>
 </div>
 ```
 
 ```css
 .radar-pulse {
-    position: absolute;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: rgba(233, 180, 76, 0.4); /* Gold Accent */
-    animation: beaconPulse 2s infinite ease-out;
+ position: absolute;
+ width: 32px;
+ height: 32px;
+ border-radius: 50%;
+ background: rgba(233, 180, 76, 0.4); /* Gold Accent */
+ animation: beaconPulse 2s infinite ease-out;
 }
 
 @keyframes beaconPulse {
-    0% { transform: scale(0.4); opacity: 1; }
-    100% { transform: scale(2.2); opacity: 0; }
+ 0% { transform: scale(0.4); opacity: 1; }
+ 100% { transform: scale(2.2); opacity: 0; }
 }
 
 .center-dot {
-    width: 12px;
-    height: 12px;
-    background: #E9B44C;
-    border: 2px solid #FAF8F5;
-    border-radius: 50%;
+ width: 12px;
+ height: 12px;
+ background: #E9B44C;
+ border: 2px solid #FAF8F5;
+ border-radius: 50%;
 }
 ```
 

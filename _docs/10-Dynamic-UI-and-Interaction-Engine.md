@@ -22,22 +22,22 @@ Ghumo adheres to the **Ambient Canvas Paradigm**:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> CollapsedPill: App Launch
-    
-    CollapsedPill --> SearchExpanded: Tap Search Pill
-    CollapsedPill --> AIPromptExpanded: Tap AI Sparkle
-    CollapsedPill --> MapFocusMode: Tap Map Toggle
-    
-    SearchExpanded --> ResultCarouselActive: Submit Query & Fast Cache Hit
-    AIPromptExpanded --> ItineraryGenerating: Submit Prompt / YouTube Vlog
-    ItineraryGenerating --> ResultCarouselActive: SSE Complete
-    
-    ResultCarouselActive --> PlaceDetailModal: Tap Card in Carousel
-    PlaceDetailModal --> ResultCarouselActive: Dismiss Modal
-    
-    ResultCarouselActive --> CollapsedPill: Clear Results
-    SearchExpanded --> CollapsedPill: Tap Close / Backdrop
-    AIPromptExpanded --> CollapsedPill: Tap Close / Backdrop
+ [*] --> CollapsedPill: App Launch
+ 
+ CollapsedPill --> SearchExpanded: Tap Search Pill
+ CollapsedPill --> AIPromptExpanded: Tap AI Sparkle
+ CollapsedPill --> MapFocusMode: Tap Map Toggle
+ 
+ SearchExpanded --> ResultCarouselActive: Submit Query & Fast Cache Hit
+ AIPromptExpanded --> ItineraryGenerating: Submit Prompt / YouTube Vlog
+ ItineraryGenerating --> ResultCarouselActive: SSE Complete
+ 
+ ResultCarouselActive --> PlaceDetailModal: Tap Card in Carousel
+ PlaceDetailModal --> ResultCarouselActive: Dismiss Modal
+ 
+ ResultCarouselActive --> CollapsedPill: Clear Results
+ SearchExpanded --> CollapsedPill: Tap Close / Backdrop
+ AIPromptExpanded --> CollapsedPill: Tap Close / Backdrop
 ```
 
 ---
@@ -48,11 +48,11 @@ At over 50KB of optimized React Native logic, `DynamicBottomBar` serves as the p
 
 ```mermaid
 flowchart TD
-    subgraph BottomBar ["DynamicBottomBar Finite State Machine"]
-        Pill["State 1: Collapsed Glass Pill\n- Floating Search Input\n- AI Sparkle Icon Button\n- Map Visibility Toggle Button\n- Horizontal Category Filter Chips"]
-        AISheet["State 2: AI Prompt Expanded\n- Multi-modal Natural Prompt Box\n- YouTube Video URL Detection Pill\n- Travel Vibe & Duration Selectors"]
-        SearchSheet["State 3: Search Expanded\n- Instant Search Input Field\n- Recent Search History Chips\n- Clear History & Close Actions"]
-    end
+ subgraph BottomBar ["DynamicBottomBar Finite State Machine"]
+ Pill["State 1: Collapsed Glass Pill\n- Floating Search Input\n- AI Sparkle Icon Button\n- Map Visibility Toggle Button\n- Horizontal Category Filter Chips"]
+ AISheet["State 2: AI Prompt Expanded\n- Multi-modal Natural Prompt Box\n- YouTube Video URL Detection Pill\n- Travel Vibe & Duration Selectors"]
+ SearchSheet["State 3: Search Expanded\n- Instant Search Input Field\n- Recent Search History Chips\n- Clear History & Close Actions"]
+ end
 ```
 
 ### Action Controls inside the Collapsed Pill:
@@ -69,13 +69,13 @@ When a search succeeds or an itinerary is generated, discovered landmarks are pr
 
 ```mermaid
 flowchart LR
-    subgraph CarouselEngine ["MapPlaceCarousel Engine"]
-        FlatList["Horizontal FlatList\n- snapToInterval = CardWidth + Gap\n- decelerationRate = 'fast'\n- getItemLayout Precomputed Offsets"]
-        Card["Interactive Place Card\n- Creative Commons Photo Header\n- Category Badge & Gold Star Rating\n- Confidence Score Indicator\n- 'Navigate' & 'Directions' Actions"]
-    end
-    
-    FlatList -->|"onMomentumScrollEnd (Card index K)"| SyncMap["Call panToLocation(place[K].lat, place[K].lng)"]
-    MapPin["User Taps Pin K on Map"] -->|"WebView onMessage"| ScrollFlatList["flatListRef.scrollToIndex(K)"]
+ subgraph CarouselEngine ["MapPlaceCarousel Engine"]
+ FlatList["Horizontal FlatList\n- snapToInterval = CardWidth + Gap\n- decelerationRate = 'fast'\n- getItemLayout Precomputed Offsets"]
+ Card["Interactive Place Card\n- Creative Commons Photo Header\n- Category Badge & Gold Star Rating\n- Confidence Score Indicator\n- 'Navigate' & 'Directions' Actions"]
+ end
+ 
+ FlatList -->|"onMomentumScrollEnd (Card index K)"| SyncMap["Call panToLocation(place[K].lat, place[K].lng)"]
+ MapPin["User Taps Pin K on Map"] -->|"WebView onMessage"| ScrollFlatList["flatListRef.scrollToIndex(K)"]
 ```
 
 ### Bidirectional Synchronization:
@@ -89,7 +89,7 @@ flowchart LR
 `PromptView` (33KB) is engineered to parse open-ended traveler prompts and social media links:
 
 ### 1. YouTube Vlog Detection Badge
-When a user pastes text containing a YouTube link into the prompt box, a regex detector automatically isolates the URL and renders an interactive **"🎥 YouTube Vlog Detected"** chip above the text field.
+When a user pastes text containing a YouTube link into the prompt box, a regex detector automatically isolates the URL and renders an interactive **" YouTube Vlog Detected"** chip above the text field.
 
 ### 2. Travel Vibe & Budget Pills
 Users can configure trip parameters with single-tap pill selectors:

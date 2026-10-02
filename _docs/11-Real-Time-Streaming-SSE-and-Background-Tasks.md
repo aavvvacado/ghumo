@@ -19,28 +19,28 @@ While WebSockets provide bidirectional full-duplex communication, they introduce
 
 ```mermaid
 sequenceDiagram
-    autonumber
-    participant C as Mobile Client (EventSource)
-    participant S as FastAPI Gateway (:8000)
-    participant E as Enrichment Worker (asyncio)
+ autonumber
+ participant C as Mobile Client (EventSource)
+ participant S as FastAPI Gateway (:8000)
+ participant E as Enrichment Worker (asyncio)
 
-    C->>S: POST /search/stream {"query": "Varanasi"}
-    S-->>C: event: progress {"step": "init", "message": "Starting intelligence search"}
-    
-    S->>E: Check Valkey Cache
-    alt Cache Miss
-        S-->>C: event: progress {"step": "mining", "message": "Mining YouTube, Reddit, Blogs & OSM..."}
-        S->>E: Execute Overpass 8km Spatial Scan
-        E-->>S: Found 42 physical POIs
-        S-->>C: event: progress {"step": "osm_complete", "message": "Found 42 places. Synthesizing AI reasoning..."}
-        
-        S->>E: Gemini 2.5 Flash Synthesis & Image Resolution
-        E-->>S: Intelligence Synthesis Complete
-        S-->>C: event: complete {"step": "complete", "data": {...finalPayload}}
-    else Cache Hit
-        S-->>C: event: progress {"step": "cache_hit", "message": "Loaded from intelligence cache"}
-        S-->>C: event: complete {"step": "complete", "data": {...cachedPayload}}
-    end
+ C->>S: POST /search/stream {"query": "Varanasi"}
+ S-->>C: event: progress {"step": "init", "message": "Starting intelligence search"}
+ 
+ S->>E: Check Valkey Cache
+ alt Cache Miss
+ S-->>C: event: progress {"step": "mining", "message": "Mining YouTube, Reddit, Blogs & OSM..."}
+ S->>E: Execute Overpass 8km Spatial Scan
+ E-->>S: Found 42 physical POIs
+ S-->>C: event: progress {"step": "osm_complete", "message": "Found 42 places. Synthesizing AI reasoning..."}
+ 
+ S->>E: Gemini 2.5 Flash Synthesis & Image Resolution
+ E-->>S: Intelligence Synthesis Complete
+ S-->>C: event: complete {"step": "complete", "data": {...finalPayload}}
+ else Cache Hit
+ S-->>C: event: progress {"step": "cache_hit", "message": "Loaded from intelligence cache"}
+ S-->>C: event: complete {"step": "complete", "data": {...cachedPayload}}
+ end
 ```
 
 ---
@@ -68,11 +68,11 @@ Ghumo implements a **Dual-Mode Execution Architecture**:
 
 ```mermaid
 flowchart TD
-    Req["Background Enrichment Request"] --> Router{"Task Dispatcher"}
-    
-    Router --> Mode1["In-Process asyncio.create_task\n(Primary Development & Demo Mode)\n- Zero Redis / Celery dependency\n- Executes directly on Windows/Linux event loop\n- Guaranteed execution in local setup"]
-    
-    Router --> Mode2["Celery Distributed Task Queue\n(Production Scaled Mode)\n- celery_app.py + miner_tasks.py\n- Redis / Valkey message broker\n- Multi-worker parallel processing"]
+ Req["Background Enrichment Request"] --> Router{"Task Dispatcher"}
+ 
+ Router --> Mode1["In-Process asyncio.create_task\n(Primary Development & Demo Mode)\n- Zero Redis / Celery dependency\n- Executes directly on Windows/Linux event loop\n- Guaranteed execution in local setup"]
+ 
+ Router --> Mode2["Celery Distributed Task Queue\n(Production Scaled Mode)\n- celery_app.py + miner_tasks.py\n- Redis / Valkey message broker\n- Multi-worker parallel processing"]
 ```
 
 ### In-Process `asyncio.create_task` Implementation:
@@ -86,9 +86,9 @@ asyncio.create_task(enrichment_service.run_enrichment_job(search_query, lat, lng
 
 # 2. Celery queue dispatch (attempted opportunistically)
 try:
-    context_enrichment_task.apply_async(args=[job_id, search_query, lat, lng], task_id=job_id)
+ context_enrichment_task.apply_async(args=[job_id, search_query, lat, lng], task_id=job_id)
 except Exception as celery_err:
-    logger.debug(f"Celery task enqueue skipped (running via asyncio): {celery_err}")
+ logger.debug(f"Celery task enqueue skipped (running via asyncio): {celery_err}")
 ```
 
 ---
@@ -108,20 +108,20 @@ Scraping external APIs (Overpass, YouTube, Reddit) too rapidly triggers IP bans 
 
 ```python
 class DiscoveryAgent:
-    async def run_discovery_loop(self):
-        while self.is_running:
-            target_city = self.registry.get_next_unseeded_city()
-            logger.info(f"[DiscoveryAgent] Starting discovery crawl for: {target_city}")
-            
-            try:
-                await enrichment_service.run_enrichment_job(target_city)
-            except Exception as err:
-                logger.error(f"[DiscoveryAgent] Crawl failed for {target_city}: {err}")
-                
-            # Randomized jitter: Sleep 10 to 20 minutes between city jobs
-            jitter_seconds = random.randint(600, 1200)
-            logger.info(f"[DiscoveryAgent] Sleeping for {jitter_seconds // 60} minutes to protect API quotas...")
-            await asyncio.sleep(jitter_seconds)
+ async def run_discovery_loop(self):
+ while self.is_running:
+ target_city = self.registry.get_next_unseeded_city()
+ logger.info(f"[DiscoveryAgent] Starting discovery crawl for: {target_city}")
+ 
+ try:
+ await enrichment_service.run_enrichment_job(target_city)
+ except Exception as err:
+ logger.error(f"[DiscoveryAgent] Crawl failed for {target_city}: {err}")
+ 
+ # Randomized jitter: Sleep 10 to 20 minutes between city jobs
+ jitter_seconds = random.randint(600, 1200)
+ logger.info(f"[DiscoveryAgent] Sleeping for {jitter_seconds // 60} minutes to protect API quotas...")
+ await asyncio.sleep(jitter_seconds)
 ```
 
 This prevents crawler fingerprinting, distributes network load evenly, and steadily populates the Supabase database with verified places over time.

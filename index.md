@@ -12,41 +12,41 @@ A production-grade, multi-modal AI travel discovery platform and itinerary synth
 
 ```mermaid
 flowchart TD
-    subgraph Client ["Client Layer (Expo SDK 57 / React Native)"]
-        UI["Mobile & Web Client\n- DynamicBottomBar (Morphing State)\n- MapPlaceCarousel (Downward Gravity)\n- Warm Ivory & Dark Charcoal UI"]
-        Map["Zero-Watermark Map WebView\n- Leaflet.js + OSM Raster Tiles\n- Dark Charcoal CSS Inversion Shaders\n- Pulsating Radar User Location Beacon"]
-        AuthClient["Supabase Auth Client\n- Guest Session Support\n- Token Persistence"]
-    end
+ subgraph Client ["Client Layer (Expo SDK 57 / React Native)"]
+ UI["Mobile & Web Client\n- DynamicBottomBar (Morphing State)\n- MapPlaceCarousel (Downward Gravity)\n- Warm Ivory & Dark Charcoal UI"]
+ Map["Zero-Watermark Map WebView\n- Leaflet.js + OSM Raster Tiles\n- Dark Charcoal CSS Inversion Shaders\n- Pulsating Radar User Location Beacon"]
+ AuthClient["Supabase Auth Client\n- Guest Session Support\n- Token Persistence"]
+ end
 
-    subgraph Gateway ["API Gateway & Resolution Layer (FastAPI :8000)"]
-        FastAPI["FastAPI ASGI Server\n- Windows Proactor Event Loop\n- CORS & Global Error Handlers"]
-        Router["API Router\n- SSE Streaming Endpoints\n- Validation via Pydantic Schemas"]
-        Resolver["Multi-Tier Enrichment Engine\n- Tier 1: Valkey Cache (<50ms)\n- Tier 2: PostgreSQL AIContext\n- Tier 3: Anchor Landmark Elevation\n- Tier 4: Regional POI Database"]
-        FastAPI --> Router --> Resolver
-    end
+ subgraph Gateway ["API Gateway & Resolution Layer (FastAPI :8000)"]
+ FastAPI["FastAPI ASGI Server\n- Windows Proactor Event Loop\n- CORS & Global Error Handlers"]
+ Router["API Router\n- SSE Streaming Endpoints\n- Validation via Pydantic Schemas"]
+ Resolver["Multi-Tier Enrichment Engine\n- Tier 1: Valkey Cache (<50ms)\n- Tier 2: PostgreSQL AIContext\n- Tier 3: Anchor Landmark Elevation\n- Tier 4: Regional POI Database"]
+ FastAPI --> Router --> Resolver
+ end
 
-    subgraph Engines ["Core Intelligence & Crawlers"]
-        AIPlanner["AI Itinerary Synthesizer\n- Google Gemini (2.5 & 2.0 Flash)\n- Groq Llama-3-70B Fallback\n- Chunked Day-by-Day Scheduling"]
-        YTService["Multi-Modal Video & Vlog Miner\n- TranscriptAPI.com + YouTube API\n- Spoken Landmark Timestamp Matcher\n- Instagram / TikTok Reel Extractor"]
-        GeoService["Geospatial & Overpass Pipeline\n- Nominatim Geocoding\n- 8km Overpass QL Spatial Query\n- Haversine Knowledge Graph"]
-        PlaceGuard["Quality & Image Resolvers\n- PlaceQualityValidator (Anti-Hallucination)\n- Wikimedia Commons & Unsplash API"]
-    end
+ subgraph Engines ["Core Intelligence & Crawlers"]
+ AIPlanner["AI Itinerary Synthesizer\n- Google Gemini (2.5 & 2.0 Flash)\n- Groq Llama-3-70B Fallback\n- Chunked Day-by-Day Scheduling"]
+ YTService["Multi-Modal Video & Vlog Miner\n- TranscriptAPI.com + YouTube API\n- Spoken Landmark Timestamp Matcher\n- Instagram / TikTok Reel Extractor"]
+ GeoService["Geospatial & Overpass Pipeline\n- Nominatim Geocoding\n- 8km Overpass QL Spatial Query\n- Haversine Knowledge Graph"]
+ PlaceGuard["Quality & Image Resolvers\n- PlaceQualityValidator (Anti-Hallucination)\n- Wikimedia Commons & Unsplash API"]
+ end
 
-    subgraph Storage ["Data & Cache Layer"]
-        Supabase[("Supabase PostgreSQL\n- Places & HiddenGems\n- AIContext & TravelTips\n- Bayesian TargetFeedback")]
-        Valkey[("Valkey / Redis In-Memory Cache\n- Sub-millisecond Hot Promotion\n- 24h Scraping Jitter Cache")]
-        CeleryWorker["Background Tasks & Discovery\n- 300+ NCR Cities Registry Scanner\n- 10-20m Anti-Ban Randomized Jitter"]
-    end
+ subgraph Storage ["Data & Cache Layer"]
+ Supabase[("Supabase PostgreSQL\n- Places & HiddenGems\n- AIContext & TravelTips\n- Bayesian TargetFeedback")]
+ Valkey[("Valkey / Redis In-Memory Cache\n- Sub-millisecond Hot Promotion\n- 24h Scraping Jitter Cache")]
+ CeleryWorker["Background Tasks & Discovery\n- 300+ NCR Cities Registry Scanner\n- 10-20m Anti-Ban Randomized Jitter"]
+ end
 
-    UI -->|"REST & SSE Streams\n(/search/stream, /itinerary/stream)"| FastAPI
-    Map <-->|"Bidirectional Bridge\n(postMessage / injectJS)"| UI
-    Resolver -- Cache Miss --> AIPlanner
-    Resolver -- Cache Miss --> YTService
-    Resolver -- Cache Miss --> GeoService
-    Resolver --> PlaceGuard
-    FastAPI <--> Supabase
-    FastAPI <--> Valkey
-    Valkey --> CeleryWorker
+ UI -->|"REST & SSE Streams\n(/search/stream, /itinerary/stream)"| FastAPI
+ Map <-->|"Bidirectional Bridge\n(postMessage / injectJS)"| UI
+ Resolver -- Cache Miss --> AIPlanner
+ Resolver -- Cache Miss --> YTService
+ Resolver -- Cache Miss --> GeoService
+ Resolver --> PlaceGuard
+ FastAPI <--> Supabase
+ FastAPI <--> Valkey
+ Valkey --> CeleryWorker
 ```
 
 ---
@@ -110,29 +110,29 @@ This documentation suite serves as an exhaustive engineering handbook for onboar
 
 ```mermaid
 mindmap
-  root((Ghumo Stack))
-    Frontend
-      Expo SDK 57
-      React Native 0.76+
-      TypeScript Strict
-      Leaflet.js + WebView
-      CSS Dark Shaders
-      Safe Area Context
-    Backend
-      FastAPI ASGI
-      Python 3.11+
-      Uvicorn Workers
-      Pydantic v2 Schemas
-      Windows Proactor Loop
-    Intelligence
-      Google Gemini 2.5 Flash
-      Groq Llama-3 70B
-      Overpass QL OSM
-      TranscriptAPI.com
-      Reddit JSON Endpoints
-    Storage & Cache
-      Supabase PostgreSQL
-      SQLAlchemy ORM
-      Valkey / Redis
-      Celery Task Queue
+ root((Ghumo Stack))
+ Frontend
+ Expo SDK 57
+ React Native 0.76+
+ TypeScript Strict
+ Leaflet.js + WebView
+ CSS Dark Shaders
+ Safe Area Context
+ Backend
+ FastAPI ASGI
+ Python 3.11+
+ Uvicorn Workers
+ Pydantic v2 Schemas
+ Windows Proactor Loop
+ Intelligence
+ Google Gemini 2.5 Flash
+ Groq Llama-3 70B
+ Overpass QL OSM
+ TranscriptAPI.com
+ Reddit JSON Endpoints
+ Storage & Cache
+ Supabase PostgreSQL
+ SQLAlchemy ORM
+ Valkey / Redis
+ Celery Task Queue
 ```

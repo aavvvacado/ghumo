@@ -17,15 +17,15 @@ Geographic coordinates form the foundational anchor for all Ghumo subsystems. Th
 
 ```mermaid
 flowchart LR
-    Query["Search Query: 'Majnu Ka Tila'"] --> Nom["Nominatim Geocoding Gateway\n(nominatim.openstreetmap.org/search)"]
-    Nom --> Resp["GeoJSON Payload\n- lat: 28.7041, lng: 77.2289\n- boundingbox: [28.69, 28.71, 77.21, 77.23]\n- display_name: 'Majnu-ka-tilla, Civil Lines, Delhi'"]
-    Resp --> Ext["Spatial Extractor\n- Extract City / Municipality Anchor\n- Establish 8km Bounding Radius"]
+ Query["Search Query: 'Majnu Ka Tila'"] --> Nom["Nominatim Geocoding Gateway\n(nominatim.openstreetmap.org/search)"]
+ Nom --> Resp["GeoJSON Payload\n- lat: 28.7041, lng: 77.2289\n- boundingbox: [28.69, 28.71, 77.21, 77.23]\n- display_name: 'Majnu-ka-tilla, Civil Lines, Delhi'"]
+ Resp --> Ext["Spatial Extractor\n- Extract City / Municipality Anchor\n- Establish 8km Bounding Radius"]
 ```
 
 ### Nominatim Usage Policy & Compliance
 To guarantee zero service suspensions or 403 Forbidden bans:
 1. **Custom Compliant User-Agent**: Transmits descriptive header identifying the application:
-   `User-Agent: GhumoTravelApp/1.0 (contact: vpratapsingh099@gmail.com)`
+ `User-Agent: GhumoTravelApp/1.0 (contact: vpratapsingh099@gmail.com)`
 2. **Result Caching**: Geocoded bounding boxes and coordinates are cached in Valkey under `geocode:{query}` with a 7-day TTL, drastically minimizing external outbound calls.
 
 ---
@@ -37,10 +37,10 @@ When an uncached destination requires physical landmark indexing, Ghumo construc
 ```overpass
 [out:json][timeout:25];
 (
-  node["amenity"~"restaurant|cafe|fast_food|food_court"](around:8000, 28.7041, 77.2289);
-  node["tourism"~"attraction|museum|viewpoint|artwork|hotel"](around:8000, 28.7041, 77.2289);
-  node["historic"~"monument|memorial|ruins|castle|archaeological_site"](around:8000, 28.7041, 77.2289);
-  node["shop"~"mall|convenience|bakery|supermarket"](around:8000, 28.7041, 77.2289);
+ node["amenity"~"restaurant|cafe|fast_food|food_court"](around:8000, 28.7041, 77.2289);
+ node["tourism"~"attraction|museum|viewpoint|artwork|hotel"](around:8000, 28.7041, 77.2289);
+ node["historic"~"monument|memorial|ruins|castle|archaeological_site"](around:8000, 28.7041, 77.2289);
+ node["shop"~"mall|convenience|bakery|supermarket"](around:8000, 28.7041, 77.2289);
 );
 out body 60;
 >;
@@ -56,10 +56,10 @@ Nodes returned by Overpass are automatically classified into discrete applicatio
 
 | OSM Tag Pattern | Ghumo Domain Category | UI Card Icon & Color |
 | :--- | :--- | :--- |
-| `historic=*` or `tourism=attraction\|museum` | `attractions` | 🏛️ Amber `#D4A373` |
-| `amenity=restaurant\|cafe\|fast_food` | `food` | 🍜 Crimson `#E76F51` |
-| `shop=mall\|market` or `amenity=marketplace` | `markets` | 🛍️ Emerald `#2A9D8F` |
-| `tourism=viewpoint` or unclassified gems | `hidden_gems` | 💎 Purple `#9D4EDD` |
+| `historic=*` or `tourism=attraction\|museum` | `attractions` | Amber `#D4A373` |
+| `amenity=restaurant\|cafe\|fast_food` | `food` | Crimson `#E76F51` |
+| `shop=mall\|market` or `amenity=marketplace` | `markets` | Emerald `#2A9D8F` |
+| `tourism=viewpoint` or unclassified gems | `hidden_gems` | Purple `#9D4EDD` |
 
 ---
 
@@ -69,15 +69,15 @@ A list of disconnected points of interest provides poor guidance for day-wise it
 
 ```mermaid
 graph TD
-    A["Monument: Red Fort\n(Lat: 28.6562, Lng: 77.2410)"]
-    B["Food: Karim's Jama Masjid\n(Lat: 28.6507, Lng: 77.2334)"]
-    C["Market: Chandni Chowk Bazaar\n(Lat: 28.6579, Lng: 77.2309)"]
-    D["Food: Natraj Dahi Bhalla\n(Lat: 28.6575, Lng: 77.2312)"]
+ A["Monument: Red Fort\n(Lat: 28.6562, Lng: 77.2410)"]
+ B["Food: Karim's Jama Masjid\n(Lat: 28.6507, Lng: 77.2334)"]
+ C["Market: Chandni Chowk Bazaar\n(Lat: 28.6579, Lng: 77.2309)"]
+ D["Food: Natraj Dahi Bhalla\n(Lat: 28.6575, Lng: 77.2312)"]
 
-    A -->|"food_near_landmark (d = 850m)"| B
-    A -->|"market_near_landmark (d = 980m)"| C
-    C -->|"nearby (d = 45m)"| D
-    B -->|"nearby (d = 720m)"| C
+ A -->|"food_near_landmark (d = 850m)"| B
+ A -->|"market_near_landmark (d = 980m)"| C
+ C -->|"nearby (d = 45m)"| D
+ B -->|"nearby (d = 720m)"| C
 ```
 
 ### Mathematical Haversine Distance Engine
@@ -104,24 +104,24 @@ Returns all neighboring places, grouped by relationship type with precomputed wa
 
 ```json
 {
-  "place_id": 104,
-  "place_name": "Humayun's Tomb",
-  "relations": [
-    {
-      "related_place_id": 218,
-      "name": "Sunder Nursery Heritage Park",
-      "relation_type": "nearby",
-      "distance_meters": 420,
-      "walk_time_minutes": 5
-    },
-    {
-      "related_place_id": 305,
-      "name": "Nizamuddin Dargah Kebab Stalls",
-      "relation_type": "food_near_landmark",
-      "distance_meters": 950,
-      "walk_time_minutes": 12
-    }
-  ]
+ "place_id": 104,
+ "place_name": "Humayun's Tomb",
+ "relations": [
+ {
+ "related_place_id": 218,
+ "name": "Sunder Nursery Heritage Park",
+ "relation_type": "nearby",
+ "distance_meters": 420,
+ "walk_time_minutes": 5
+ },
+ {
+ "related_place_id": 305,
+ "name": "Nizamuddin Dargah Kebab Stalls",
+ "relation_type": "food_near_landmark",
+ "distance_meters": 950,
+ "walk_time_minutes": 12
+ }
+ ]
 }
 ```
 

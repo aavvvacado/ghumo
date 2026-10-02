@@ -26,23 +26,23 @@ Ghumo adheres to a **Zero-Hallucination Visual Architecture**:
 
 ```mermaid
 flowchart TD
-    POI["Place Entity: 'Humayun's Tomb, Delhi'"] --> Val{"PlaceQualityValidator"}
-    
-    Val -- "Invalid / Garbage Name" --> DROP["Reject Entity"]
-    Val -- "Sanitized & Verified" --> ImgResolver["PlaceImageResolver Pipeline"]
-    
-    ImgResolver --> T1{Tier 1: Wikimedia Commons API\nQuery: Generator Search}
-    T1 -- "Hit (>0 Photos)" --> HEAD["HTTP HEAD MIME Verification\n(Content-Type == image/*)"]
-    T1 -- "Miss" --> T2{Tier 2: Wikidata SPARQL\nEntity Property: P18 Image}
-    
-    T2 -- "Hit" --> HEAD
-    T2 -- "Miss" --> T3{Tier 3: Unsplash Photo API\nStrict Keyword Search}
-    
-    T3 -- "Hit" --> HEAD
-    T3 -- "Miss" --> T4["Tier 4: Curated Regional Fallback\nCategory Photography (Fort, Temple, Food)"]
-    
-    HEAD -- "200 OK & Valid Aspect" --> ATTACH["Attach Image Metadata to Place Card\n- URL, Attribution, License, Dimensions"]
-    HEAD -- "404 / Timeout (>3s)" --> T4
+ POI["Place Entity: 'Humayun's Tomb, Delhi'"] --> Val{"PlaceQualityValidator"}
+ 
+ Val -- "Invalid / Garbage Name" --> DROP["Reject Entity"]
+ Val -- "Sanitized & Verified" --> ImgResolver["PlaceImageResolver Pipeline"]
+ 
+ ImgResolver --> T1{Tier 1: Wikimedia Commons API\nQuery: Generator Search}
+ T1 -- "Hit (>0 Photos)" --> HEAD["HTTP HEAD MIME Verification\n(Content-Type == image/*)"]
+ T1 -- "Miss" --> T2{Tier 2: Wikidata SPARQL\nEntity Property: P18 Image}
+ 
+ T2 -- "Hit" --> HEAD
+ T2 -- "Miss" --> T3{Tier 3: Unsplash Photo API\nStrict Keyword Search}
+ 
+ T3 -- "Hit" --> HEAD
+ T3 -- "Miss" --> T4["Tier 4: Curated Regional Fallback\nCategory Photography (Fort, Temple, Food)"]
+ 
+ HEAD -- "200 OK & Valid Aspect" --> ATTACH["Attach Image Metadata to Place Card\n- URL, Attribution, License, Dimensions"]
+ HEAD -- "404 / Timeout (>3s)" --> T4
 ```
 
 ---
@@ -56,14 +56,14 @@ Entities matching generic or unhelpful names are immediately rejected:
 
 ```python
 GARBAGE_PATTERNS = [
-    r"^point of interest$",
-    r"^unnamed$",
-    r"^n/?a$",
-    r"^unknown$",
-    r"^\d+$",               # Pure numeric strings (e.g. "12345")
-    r"^shop$",
-    r"^commercial building$",
-    r"^metro pillar \d+$"
+ r"^point of interest$",
+ r"^unnamed$",
+ r"^n/?a$",
+ r"^unknown$",
+ r"^\d+$", # Pure numeric strings (e.g. "12345")
+ r"^shop$",
+ r"^commercial building$",
+ r"^metro pillar \d+$"
 ]
 ```
 
@@ -87,12 +87,12 @@ To prevent duplicate cards when multiple sources report slightly different names
 Queries Wikimedia Commons using MediaWiki generator search:
 ```
 https://commons.wikimedia.org/w/api.php?action=query
-  &generator=search
-  &gsrsearch={place_name}+{city}
-  &gsrlimit=3
-  &prop=imageinfo
-  &iiprop=url|size|extmetadata
-  &format=json
+ &generator=search
+ &gsrsearch={place_name}+{city}
+ &gsrlimit=3
+ &prop=imageinfo
+ &iiprop=url|size|extmetadata
+ &format=json
 ```
 - Extracts high-resolution direct image URLs (`imageinfo[0].url`).
 - Preserves artist credit and Creative Commons license terms (`CC-BY-SA 4.0`, `CC0 Public Domain`) for attribution display in the modal detail sheet.
@@ -101,8 +101,8 @@ https://commons.wikimedia.org/w/api.php?action=query
 For major national monuments (e.g. *Qutub Minar* or *Taj Mahal*), the resolver queries the official Wikidata entity to extract its canonical photograph (Property `P18`):
 ```sparql
 SELECT ?image WHERE {
-  ?item rdfs:label "Qutub Minar"@en;
-        wdt:P18 ?image.
+ ?item rdfs:label "Qutub Minar"@en;
+ wdt:P18 ?image.
 } LIMIT 1
 ```
 
@@ -114,9 +114,9 @@ If Wikimedia yields zero hits (common for modern student cafes or newly opened m
 ### Tier 4: Curated Regional Category Photographic Fallbacks
 If all external network queries fail or timeout:
 - Selects an authentic, high-resolution regional photograph from Ghumo's curated offline asset registry matched to the place's exact category:
-  - `heritage`: High-resolution photograph of Mughal red sandstone architecture.
-  - `food`: Authentic photograph of sizzling tandoori and street spices.
-  - `nature`: Verdant greenery or sunset riverbank.
+ - `heritage`: High-resolution photograph of Mughal red sandstone architecture.
+ - `food`: Authentic photograph of sizzling tandoori and street spices.
+ - `nature`: Verdant greenery or sunset riverbank.
 
 ---
 
@@ -128,12 +128,12 @@ When an itinerary or search query returns 15 distinct places, running image quer
 The resolver groups places into an `asyncio.gather` batch:
 ```python
 async def resolve_places_batch(places: list, city: str = "", timeout: float = 3.5):
-    tasks = [
-        resolve_single_place(place, city=city, timeout=timeout)
-        for place in places
-    ]
-    # Execute all image searches concurrently with global timeout guard
-    await asyncio.gather(*tasks, return_exceptions=True)
+ tasks = [
+ resolve_single_place(place, city=city, timeout=timeout)
+ for place in places
+ ]
+ # Execute all image searches concurrently with global timeout guard
+ await asyncio.gather(*tasks, return_exceptions=True)
 ```
 
 ### HTTP HEAD Health Verification

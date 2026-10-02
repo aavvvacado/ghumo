@@ -19,27 +19,27 @@ Ghumo ingests video URLs and executes automated transcript mining and entity geo
 
 ```mermaid
 flowchart TD
-    URL["Travel Video URL\n(YouTube / Shorts / Instagram Reels / TikTok)"] --> Parser{"URL Demuxer & Metadata Parser"}
-    
-    Parser -- YouTube / Shorts --> YT["YouTube Service\n(Extract Video ID & Metadata)"]
-    Parser -- Reels / TikTok --> SOC["Social Mining Service\nyt-dlp Metadata Extraction"]
-    
-    YT --> TCheck{Tier 1: Valkey Cache\nKey: 'yt_transcript:{video_id}'}
-    TCheck -- Cache Hit (24h TTL) --> LLM
-    TCheck -- Cache Miss --> PrimaryAPI["Primary: transcriptapi.com API\n(Timecoded Transcript Segments)"]
-    
-    PrimaryAPI -- Success --> CACHE["Cache Transcript in Valkey"] --> LLM
-    PrimaryAPI -- Fail / No Captions --> SecondaryLib["Secondary: youtube_transcript_api\n(Proxy Rotated Extraction)"]
-    SecondaryLib -- Success --> CACHE
-    SecondaryLib -- No Captions --> DESC["Tertiary: Video Description &\nTitle NLP Entity Extraction"] --> LLM
-    
-    SOC --> DUCK["DuckDuckGo Fallback Context Search\n(When Social Platform Blocks API)"] --> LLM
-    
-    subgraph EntityMapping ["Landmark Resolution & Synthesis"]
-        LLM["Google Gemini / Groq LLM\n- Extract Spoken Landmark Mentions\n- Map to Video Timestamps\n- Deduplicate Chronological Waypoints"]
-        LLM --> GEO["Nominatim & OSM Overpass\nPhysical Coordinate Verification"]
-        GEO --> ITIN["Structured Day-Wise Video Itinerary\n(Rendered on Dark Map with Timestamps)"]
-    end
+ URL["Travel Video URL\n(YouTube / Shorts / Instagram Reels / TikTok)"] --> Parser{"URL Demuxer & Metadata Parser"}
+ 
+ Parser -- YouTube / Shorts --> YT["YouTube Service\n(Extract Video ID & Metadata)"]
+ Parser -- Reels / TikTok --> SOC["Social Mining Service\nyt-dlp Metadata Extraction"]
+ 
+ YT --> TCheck{Tier 1: Valkey Cache\nKey: 'yt_transcript:{video_id}'}
+ TCheck -- Cache Hit (24h TTL) --> LLM
+ TCheck -- Cache Miss --> PrimaryAPI["Primary: transcriptapi.com API\n(Timecoded Transcript Segments)"]
+ 
+ PrimaryAPI -- Success --> CACHE["Cache Transcript in Valkey"] --> LLM
+ PrimaryAPI -- Fail / No Captions --> SecondaryLib["Secondary: youtube_transcript_api\n(Proxy Rotated Extraction)"]
+ SecondaryLib -- Success --> CACHE
+ SecondaryLib -- No Captions --> DESC["Tertiary: Video Description &\nTitle NLP Entity Extraction"] --> LLM
+ 
+ SOC --> DUCK["DuckDuckGo Fallback Context Search\n(When Social Platform Blocks API)"] --> LLM
+ 
+ subgraph EntityMapping ["Landmark Resolution & Synthesis"]
+ LLM["Google Gemini / Groq LLM\n- Extract Spoken Landmark Mentions\n- Map to Video Timestamps\n- Deduplicate Chronological Waypoints"]
+ LLM --> GEO["Nominatim & OSM Overpass\nPhysical Coordinate Verification"]
+ GEO --> ITIN["Structured Day-Wise Video Itinerary\n(Rendered on Dark Map with Timestamps)"]
+ end
 ```
 
 ---
@@ -51,34 +51,34 @@ The service normalizes various YouTube link permutations into a clean 11-charact
 
 ```python
 YOUTUBE_PATTERNS = [
-    r"(?:v=|\/)([0-9A-Za-z_-]{11}).*",
-    r"(?:youtu\.be\/)([0-9A-Za-z_-]{11})",
-    r"(?:shorts\/)([0-9A-Za-z_-]{11})"
+ r"(?:v=|\/)([0-9A-Za-z_-]{11}).*",
+ r"(?:youtu\.be\/)([0-9A-Za-z_-]{11})",
+ r"(?:shorts\/)([0-9A-Za-z_-]{11})"
 ]
 
 def extract_video_id(url: str) -> Optional[str]:
-    for pattern in YOUTUBE_PATTERNS:
-        match = re.search(pattern, url)
-        if match:
-            return match.group(1)
-    return None
+ for pattern in YOUTUBE_PATTERNS:
+ match = re.search(pattern, url)
+ if match:
+ return match.group(1)
+ return None
 ```
 
 ### Transcript Extraction Cascade
 1. **Primary Provider (`transcriptapi.com`)**:
-   - Transmits HTTP GET request with authorization token:
-     `https://transcriptapi.com/api/v1/transcript?video_id={video_id}`
-   - Returns structured timecoded segments:
-     ```json
-     [
-       {"start": 12.4, "duration": 3.8, "text": "We just arrived at Chandni Chowk, heading straight to Paranthe Wali Gali."},
-       {"start": 125.1, "duration": 4.2, "text": "Now look at this 200-year-old shop serving rabri paranthas..."}
-     ]
-     ```
+ - Transmits HTTP GET request with authorization token:
+ `https://transcriptapi.com/api/v1/transcript?video_id={video_id}`
+ - Returns structured timecoded segments:
+ ```json
+ [
+ {"start": 12.4, "duration": 3.8, "text": "We just arrived at Chandni Chowk, heading straight to Paranthe Wali Gali."},
+ {"start": 125.1, "duration": 4.2, "text": "Now look at this 200-year-old shop serving rabri paranthas..."}
+ ]
+ ```
 2. **Secondary Provider (`youtube_transcript_api`)**:
-   - Python library querying YouTube's internal caption tracks with language fallbacks (`en`, `hi`, `en-IN`, `auto`).
+ - Python library querying YouTube's internal caption tracks with language fallbacks (`en`, `hi`, `en-IN`, `auto`).
 3. **24-Hour Valkey Caching**:
-   - Extracted transcript payloads are stored with key `yt_transcript:{video_id}` and TTL of 86,400 seconds, eliminating redundant external API consumption.
+ - Extracted transcript payloads are stored with key `yt_transcript:{video_id}` and TTL of 86,400 seconds, eliminating redundant external API consumption.
 
 ---
 
@@ -93,14 +93,14 @@ restaurants, viewpoints, and street food stalls visited by the traveler.
 
 Format your response as a JSON array of objects:
 [
-  {
-    "landmark_name": "string",
-    "timestamp_seconds": int,
-    "timestamp_display": "MM:SS",
-    "spoken_context": "string (what the vlogger said about it)",
-    "category": "food | attraction | market | stay",
-    "vlogger_verdict": "string (recommendation or warning)"
-  }
+ {
+ "landmark_name": "string",
+ "timestamp_seconds": int,
+ "timestamp_display": "MM:SS",
+ "spoken_context": "string (what the vlogger said about it)",
+ "category": "food | attraction | market | stay",
+ "vlogger_verdict": "string (recommendation or warning)"
+ }
 ]
 """
 ```
@@ -118,11 +118,11 @@ When a user taps a waypoint in the itinerary:
 
 For non-YouTube platforms (Instagram Reels, TikTok, Facebook Watch):
 1. **Metadata Scraping via `yt-dlp`**:
-   - Extracts video captions, user tags, hashtag clusters (e.g. `#delhifoodguide`, `#hiddenwaterfall`), and video descriptions without downloading full video streams.
+ - Extracts video captions, user tags, hashtag clusters (e.g. `#delhifoodguide`, `#hiddenwaterfall`), and video descriptions without downloading full video streams.
 2. **DuckDuckGo Context Expansion**:
-   - If a video caption is brief (e.g. *"Best rooftop cafe in Majnu Ka Tila! Tag your friends"*), the service runs an automated DuckDuckGo search:
-     `"{caption_keywords}" Majnu Ka Tila cafe menu address`
-   - Scrapes snippet results to verify the exact name, address, and coordinates of the cafe before itinerary compilation.
+ - If a video caption is brief (e.g. *"Best rooftop cafe in Majnu Ka Tila! Tag your friends"*), the service runs an automated DuckDuckGo search:
+ `"{caption_keywords}" Majnu Ka Tila cafe menu address`
+ - Scrapes snippet results to verify the exact name, address, and coordinates of the cafe before itinerary compilation.
 
 ---
 
@@ -132,10 +132,10 @@ For non-YouTube platforms (Instagram Reels, TikTok, Facebook Watch):
 Mainstream review platforms are heavily gamified with fake 5-star reviews. Ghumo taps regional subreddit communities (`r/delhi`, `r/india`, `r/bangalore`, `r/mumbai`) to harvest authentic traveler sentiment:
 
 - Queries Reddit JSON endpoints:
-  `https://www.reddit.com/r/{subreddit}/search.json?q={location}+food+recommendations&restrict_sr=1&sort=top`
+ `https://www.reddit.com/r/{subreddit}/search.json?q={location}+food+recommendations&restrict_sr=1&sort=top`
 - Extracts high-upvoted comments containing phrases like:
-  - *"Don't go to [Tourist Trap], walk 200m down the alley to [Authentic Dhaba]."*
-  - *"Best sunset point that locals keep secret is..."*
+ - *"Don't go to [Tourist Trap], walk 200m down the alley to [Authentic Dhaba]."*
+ - *"Best sunset point that locals keep secret is..."*
 - Feeds verified recommendations into the `TravelTip` and `HiddenGem` database tables.
 
 ### Blog Crawler with Cloudflare Bypass (`cloudflare_service.py`)

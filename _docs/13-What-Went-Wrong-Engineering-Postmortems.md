@@ -114,14 +114,14 @@ Both the Leaflet WebView and React Native's gesture responders were competing fo
 
 ### The Resolution: Dynamic Pointer Event Gating
 1. Added dynamic `pointerEvents` control to the map layer:
-   ```tsx
-   <View 
-     style={[StyleSheet.absoluteFill, { zIndex: isMapVisible ? 1 : -1 }]} 
-     pointerEvents={isMapVisible && !isSheetDragging ? 'auto' : 'none'}
-   >
-     <MapBackground />
-   </View>
-   ```
+ ```tsx
+ <View 
+ style={[StyleSheet.absoluteFill, { zIndex: isMapVisible ? 1 : -1 }]} 
+ pointerEvents={isMapVisible && !isSheetDragging ? 'auto' : 'none'}
+ >
+ <MapBackground />
+ </View>
+ ```
 2. When bottom sheets expand or cards drag, `pointerEvents` temporarily switches to `'none'`, routing 100% of touch gestures exclusively to React Native gesture handlers.
 
 ---

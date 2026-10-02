@@ -133,9 +133,9 @@ npx expo start
 If your physical smartphone fails to connect to `http://<YOUR_IP>:8000`:
 1. Ensure your computer and smartphone are connected to the **same Wi-Fi network**.
 2. On Windows, allow inbound traffic on port 8000 via PowerShell (Run as Administrator):
-   ```powershell
-   New-NetFirewallRule -DisplayName "FastAPI Ghumo Dev" -Direction Inbound -LocalPort 8000 -Protocol TCP -Action Allow
-   ```
+ ```powershell
+ New-NetFirewallRule -DisplayName "FastAPI Ghumo Dev" -Direction Inbound -LocalPort 8000 -Protocol TCP -Action Allow
+ ```
 
 ---
 

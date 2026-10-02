@@ -15,13 +15,13 @@ This document outlines the planned technical evolution, algorithmic upgrades, an
 
 ```mermaid
 timeline
-    title Ghumo Technical Roadmap
-    Phase 1 : PostGIS Spatial Engine : Native ST_DWithin & GiST Indexes
-    Phase 2 : Vector Search & RAG : pgvector Embeddings for Semantic Queries
-    Phase 3 : Multi-Modal Audio AI : Whisper AI Speech-to-Text for Social Reels
-    Phase 4 : Distributed Crawler Swarm : Headless Worker Nodes & 1000+ Cities
-    Phase 5 : Offline MapLibre Engine : SQLite Vector MBTiles for Remote Hiking
-    Phase 6 : Multiplayer Trip Canvas : CRDT Collaboration over WebSockets
+ title Ghumo Technical Roadmap
+ Phase 1 : PostGIS Spatial Engine : Native ST_DWithin & GiST Indexes
+ Phase 2 : Vector Search & RAG : pgvector Embeddings for Semantic Queries
+ Phase 3 : Multi-Modal Audio AI : Whisper AI Speech-to-Text for Social Reels
+ Phase 4 : Distributed Crawler Swarm : Headless Worker Nodes & 1000+ Cities
+ Phase 5 : Offline MapLibre Engine : SQLite Vector MBTiles for Remote Hiking
+ Phase 6 : Multiplayer Trip Canvas : CRDT Collaboration over WebSockets
 ```
 
 ---
@@ -54,7 +54,7 @@ CREATE INDEX idx_places_geom_gist ON places USING GIST (geom);
 SELECT name, category, ST_Distance(geom, ST_SetSRID(ST_MakePoint(77.2410, 28.6562), 4326)::geography) AS distance_meters
 FROM places
 WHERE ST_DWithin(geom::geography, ST_SetSRID(ST_MakePoint(77.2410, 28.6562), 4326)::geography, 1500)
-  AND category ILIKE '%food%'
+ AND category ILIKE '%food%'
 ORDER BY distance_meters ASC
 LIMIT 10;
 ```
@@ -74,12 +74,12 @@ We will implement semantic vector embeddings generated via `text-embedding-3-sma
 
 ```mermaid
 flowchart LR
-    Doc["Travel Blog / Reddit Review\n'Best quiet rooftop in Majnu Ka Tila'"] --> Embed["Embedding Model\n(1536-Dimensional Vector)"]
-    Embed --> VecDB[("Supabase pgvector\nColumn: embedding vector(1536)")]
-    
-    UserQuery["'Peaceful coffee spot with view'"] --> QEmbed["Query Vector"]
-    QEmbed --> Cosine{"Cosine Similarity (<=>)\nHNSW Index"}
-    Cosine --> RankedMatches["Top Semantic Matches\n(Ranked by Relevance)"]
+ Doc["Travel Blog / Reddit Review\n'Best quiet rooftop in Majnu Ka Tila'"] --> Embed["Embedding Model\n(1536-Dimensional Vector)"]
+ Embed --> VecDB[("Supabase pgvector\nColumn: embedding vector(1536)")]
+ 
+ UserQuery["'Peaceful coffee spot with view'"] --> QEmbed["Query Vector"]
+ QEmbed --> Cosine{"Cosine Similarity (<=>)\nHNSW Index"}
+ Cosine --> RankedMatches["Top Semantic Matches\n(Ranked by Relevance)"]
 ```
 
 ```sql

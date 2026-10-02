@@ -17,26 +17,26 @@ The client application is built with **React Native 0.76+** under the **Expo SDK
 
 ```mermaid
 flowchart TD
-    subgraph Core ["Core Runtime (Expo SDK 57)"]
-        Router["Expo Router (_layout.tsx)"]
-        TS["TypeScript 5.3 (Strict Type Checking)"]
-    end
+ subgraph Core ["Core Runtime (Expo SDK 57)"]
+ Router["Expo Router (_layout.tsx)"]
+ TS["TypeScript 5.3 (Strict Type Checking)"]
+ end
 
-    subgraph State ["Context State Hierarchy"]
-        AC["AuthContext\n- Supabase Session\n- Anonymous Guest State\n- Secure Token Storage"]
-        TC["ThemeContext\n- Warm Ivory vs Dark Charcoal\n- Animated Fade Opacity"]
-        HC["HomeContext\n- Selected Coordinates & Query\n- Map Visibility (Ambient vs Focus)\n- Active Sheet State Machine"]
-    end
+ subgraph State ["Context State Hierarchy"]
+ AC["AuthContext\n- Supabase Session\n- Anonymous Guest State\n- Secure Token Storage"]
+ TC["ThemeContext\n- Warm Ivory vs Dark Charcoal\n- Animated Fade Opacity"]
+ HC["HomeContext\n- Selected Coordinates & Query\n- Map Visibility (Ambient vs Focus)\n- Active Sheet State Machine"]
+ end
 
-    subgraph Presentation ["Layered Composition (index.tsx)"]
-        L1["Layer 1: MapBackground (Persistent WebView)"]
-        L2["Layer 2: HomeTopBar (Status Pill & Profile)"]
-        L3["Layer 3: MapPlaceCarousel (Downward Gravity Deck)"]
-        L4["Layer 4: DynamicBottomBar (Morphing AI & Search Pills)"]
-        L5["Layer 5: AuthLoadingOverlay & Modals"]
-    end
+ subgraph Presentation ["Layered Composition (index.tsx)"]
+ L1["Layer 1: MapBackground (Persistent WebView)"]
+ L2["Layer 2: HomeTopBar (Status Pill & Profile)"]
+ L3["Layer 3: MapPlaceCarousel (Downward Gravity Deck)"]
+ L4["Layer 4: DynamicBottomBar (Morphing AI & Search Pills)"]
+ L5["Layer 5: AuthLoadingOverlay & Modals"]
+ end
 
-    Router --> AC --> TC --> HC --> Presentation
+ Router --> AC --> TC --> HC --> Presentation
 ```
 
 ### Critical SDK 57 Architectural Rules
@@ -58,15 +58,15 @@ Application state is managed through three decoupled React Context providers in 
 ### 2. `ThemeContext.tsx`: Aesthetic Palette & Transition Shaders
 Toggles between two curated, high-contrast visual themes:
 - **Dark Charcoal Mode** (Default):
-  - Screen Background: `#191816` (Deep Obsidian Charcoal)
-  - Surface Card: `#252321` (Warm Smoky Quartz)
-  - Text Primary: `#FAF8F5` (Alabaster White)
-  - Accent / Gold: `#E9B44C` (Antique Gold)
+ - Screen Background: `#191816` (Deep Obsidian Charcoal)
+ - Surface Card: `#252321` (Warm Smoky Quartz)
+ - Text Primary: `#FAF8F5` (Alabaster White)
+ - Accent / Gold: `#E9B44C` (Antique Gold)
 - **Warm Ivory Mode**:
-  - Screen Background: `#ECE8E1` (Warm Architectural Ivory)
-  - Surface Card: `#FAF8F5` (Pure Milk White)
-  - Text Primary: `#191816` (Dark Charcoal)
-  - Accent: `#D4A373` (Desert Sand)
+ - Screen Background: `#ECE8E1` (Warm Architectural Ivory)
+ - Surface Card: `#FAF8F5` (Pure Milk White)
+ - Text Primary: `#191816` (Dark Charcoal)
+ - Accent: `#D4A373` (Desert Sand)
 - Implements a global `fadeAnim` (`Animated.Value`) that smoothly blends interface elements during theme transitions.
 
 ### 3. `HomeContext.tsx`: Spatial State & UI Sheet Coordination
@@ -85,38 +85,38 @@ The application enforces end-to-end type safety between the FastAPI backend and 
 ```typescript
 // src/domain/place.ts
 export interface Coordinates {
-  lat: number;
-  lng: number;
+ lat: number;
+ lng: number;
 }
 
 export interface PlaceImage {
-  url: string;
-  source: 'wikimedia' | 'wikidata' | 'unsplash' | 'curated';
-  attribution?: string;
-  license?: string;
+ url: string;
+ source: 'wikimedia' | 'wikidata' | 'unsplash' | 'curated';
+ attribution?: string;
+ license?: string;
 }
 
 export interface PlaceSearchResult {
-  id?: number | string;
-  name: string;
-  category: 'attractions' | 'food' | 'markets' | 'hidden_gems';
-  city: string;
-  lat: number;
-  lng: number;
-  confidence_score: number;
-  description?: string;
-  image?: PlaceImage;
-  cultural_lore?: string;
-  best_time?: string;
-  culinary_pairing?: string;
+ id?: number | string;
+ name: string;
+ category: 'attractions' | 'food' | 'markets' | 'hidden_gems';
+ city: string;
+ lat: number;
+ lng: number;
+ confidence_score: number;
+ description?: string;
+ image?: PlaceImage;
+ cultural_lore?: string;
+ best_time?: string;
+ culinary_pairing?: string;
 }
 
 export interface ItineraryDay {
-  day_number: number;
-  theme: string;
-  morning: ItineraryActivity;
-  afternoon: ItineraryActivity;
-  evening: ItineraryActivity;
+ day_number: number;
+ theme: string;
+ morning: ItineraryActivity;
+ afternoon: ItineraryActivity;
+ evening: ItineraryActivity;
 }
 ```
 
@@ -128,30 +128,30 @@ Rather than unmounting and remounting screens on navigation—which would destro
 
 ```tsx
 return (
-  <Animated.View style={[styles.homeRoot, { backgroundColor: theme.colors.background.screen }]}>
-    {/* Layer 1: Background Leaflet Map (Kept mounted to preserve tiles & pins) */}
-    <View style={[StyleSheet.absoluteFill, { opacity: isMapVisible ? 1 : 0 }]}>
-      <MapBackground />
-    </View>
+ <Animated.View style={[styles.homeRoot, { backgroundColor: theme.colors.background.screen }]}>
+ {/* Layer 1: Background Leaflet Map (Kept mounted to preserve tiles & pins) */}
+ <View style={[StyleSheet.absoluteFill, { opacity: isMapVisible ? 1 : 0 }]}>
+ <MapBackground />
+ </View>
 
-    {/* Layer 1.5: Ambient Ghumo Logo when Map is Hidden */}
-    {!isMapVisible && <GhumoCenterBrand />}
+ {/* Layer 1.5: Ambient Ghumo Logo when Map is Hidden */}
+ {!isMapVisible && <GhumoCenterBrand />}
 
-    {/* Layer 2: Floating Header Bar (Profile, Connectivity, Theme) */}
-    <HomeTopBar />
+ {/* Layer 2: Floating Header Bar (Profile, Connectivity, Theme) */}
+ <HomeTopBar />
 
-    {/* Layer 3: Downward Gravity Place Carousel */}
-    <MapPlaceCarousel />
+ {/* Layer 3: Downward Gravity Place Carousel */}
+ <MapPlaceCarousel />
 
-    {/* Layer 4: Dynamic Morphing Bottom Sheet Bar */}
-    <DynamicBottomBar />
+ {/* Layer 4: Dynamic Morphing Bottom Sheet Bar */}
+ <DynamicBottomBar />
 
-    {/* Layer 5: Asynchronous Loading Overlay */}
-    <AuthLoadingOverlay />
+ {/* Layer 5: Asynchronous Loading Overlay */}
+ <AuthLoadingOverlay />
 
-    {/* Layer 6: Android Back Exit Confirmation Modal */}
-    <ExitConfirmationModal visible={showExitModal} onCancel={() => setShowExitModal(false)} />
-  </Animated.View>
+ {/* Layer 6: Android Back Exit Confirmation Modal */}
+ <ExitConfirmationModal visible={showExitModal} onCancel={() => setShowExitModal(false)} />
+ </Animated.View>
 );
 ```
 

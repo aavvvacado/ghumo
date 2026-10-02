@@ -4,66 +4,66 @@ title: "Ghumo (घूमो) — AI Hyper-Local Travel Companion"
 url: "https://aavvvacado.github.io"
 baseurl: "/ghumo"
 description: >-
-  A production-grade, multi-modal AI travel companion and hyper-local discovery platform
-  bridging OpenStreetMap dark WebView maps, YouTube vlog transcript parsing, and
-  4-tier fast-cache spatial intelligence.
+ A production-grade, multi-modal AI travel companion and hyper-local discovery platform
+ bridging OpenStreetMap dark WebView maps, YouTube vlog transcript parsing, and
+ 4-tier fast-cache spatial intelligence.
 
 remote_theme: ksauraj/stygian
 
 plugins:
-  - jekyll-remote-theme
-  - jekyll-seo-tag
-  - jekyll-sitemap
+ - jekyll-remote-theme
+ - jekyll-seo-tag
+ - jekyll-sitemap
 
 # ------------------------------------------------------------------ build
 markdown: kramdown
 highlighter: rouge
 kramdown:
-  input: GFM
-  auto_ids: true
-  hard_wrap: false
-  syntax_highlighter: rouge
-  syntax_highlighter_opts:
-    block:
-      line_numbers: false
+ input: GFM
+ auto_ids: true
+ hard_wrap: false
+ syntax_highlighter: rouge
+ syntax_highlighter_opts:
+ block:
+ line_numbers: false
 
 exclude:
-  - README.md
-  - vendor
+ - README.md
+ - vendor
 
 # ------------------------------------------------------------------ content
 collections:
-  docs:
-    output: true
-    permalink: /:path/
+ docs:
+ output: true
+ permalink: /:path/
 
 defaults:
-  - scope:
-      path: ""
-      type: docs
-    values:
-      layout: docs
+ - scope:
+ path: ""
+ type: docs
+ values:
+ layout: docs
 
 # ------------------------------------------------------------------ theme
 stygian:
-  header:
-    aux_links_new_tab: true
-    aux_links:
-      - { label: "GitHub Monorepo", href: "https://github.com/aavvvacado/ghumo" }
-      - { label: "75way Submission", href: "https://github.com/aavvvacado/ghumo#readme" }
-  theme:
-    default: dark
-  syntax_highlighting:
-    enabled: true
-  search:
-    enabled: true
-    placeholder: "Search Ghumo engineering docs"
-  back_to_top: true
-  edit:
-    enabled: true
-    repo: https://github.com/aavvvacado/ghumo
-    branch: gh-pages
-    view: tree
-  footer:
-    note: "Ghumo (घूमो) — AI Hyper-Local Travel Companion & Discovery Engine"
-    right: "© 2026 aavvvacado"
+ header:
+ aux_links_new_tab: true
+ aux_links:
+ - { label: "GitHub Monorepo", href: "https://github.com/aavvvacado/ghumo" }
+ - { label: "Monorepo Overview", href: "https://github.com/aavvvacado/ghumo#readme" }
+ theme:
+ default: dark
+ syntax_highlighting:
+ enabled: true
+ search:
+ enabled: true
+ placeholder: "Search Ghumo engineering docs"
+ back_to_top: true
+ edit:
+ enabled: true
+ repo: https://github.com/aavvvacado/ghumo
+ branch: gh-pages
+ view: tree
+ footer:
+ note: "Ghumo (घूमो) — AI Hyper-Local Travel Companion & Discovery Engine"
+ right: "© 2026 aavvvacado"
