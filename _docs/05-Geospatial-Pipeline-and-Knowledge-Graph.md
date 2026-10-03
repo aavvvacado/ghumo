@@ -81,22 +81,23 @@ graph TD
 ```
 
 ### Mathematical Haversine Distance Engine
-To calculate distance between coordinates $(\phi_1, \lambda_1)$ and $(\phi_2, \lambda_2)$ without expensive external API calls, the service computes the Haversine formula in Python:
+To calculate distance between coordinates (φ₁, λ₁) and (φ₂, λ₂) without expensive external API calls, the service computes the Haversine formula in Python:
 
-$$\Delta\phi = \phi_2 - \phi_1, \quad \Delta\lambda = \lambda_2 - \lambda_1$$
+```text
+Δφ = φ₂ - φ₁
+Δλ = λ₂ - λ₁
 
-$$a = \sin^2\left(\frac{\Delta\phi}{2}\right) + \cos(\phi_1)\cos(\phi_2)\sin^2\left(\frac{\Delta\lambda}{2}\right)$$
-
-$$c = 2 \cdot \operatorname{atan2}\left(\sqrt{a}, \sqrt{1 - a}\right)$$
-
-$$d = R \cdot c \quad \text{where } R = 6{,}371{,}000\text{ meters}$$
+a = sin²(Δφ / 2) + cos(φ₁) · cos(φ₂) · sin²(Δλ / 2)
+c = 2 · atan2(√a, √(1 - a))
+d = R · c   (where R = 6,371,000 meters)
+```
 
 ### Entity Edge Taxonomy
 The system populates the `PlaceRelation` table with typed spatial and contextual edges:
 
-1. **`nearby`**: Assigned when $d \le 500\text{ meters}$. Used by the frontend to display *"Walkable in 5 mins"* badges.
-2. **`food_near_landmark`**: Links high-confidence dining spots within $1.5\text{ km}$ of a major cultural monument, answering the traveler's question: *"Where do I eat after visiting this fort?"*
-3. **`market_near_landmark`**: Links vibrant shopping bazaars within $2.0\text{ km}$ of daytime attractions.
+1. **`nearby`**: Assigned when `d ≤ 500 meters`. Used by the frontend to display *"Walkable in 5 mins"* badges.
+2. **`food_near_landmark`**: Links high-confidence dining spots within `1.5 km` of a major cultural monument, answering the traveler's question: *"Where do I eat after visiting this fort?"*
+3. **`market_near_landmark`**: Links vibrant shopping bazaars within `2.0 km` of daytime attractions.
 4. **`video_mention`**: Contextual edge connecting physical places mentioned together in the same YouTube vlog segment.
 
 ### Graph Traversal API: `GET /graph/related/{place_id}`

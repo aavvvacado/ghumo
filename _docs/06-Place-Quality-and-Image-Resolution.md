@@ -69,7 +69,7 @@ GARBAGE_PATTERNS = [
 
 ### 2. Geographic Boundary & Sanity Checks
 - Rejects null coordinate pairs `(0.0, 0.0)`.
-- Validates latitude $\in [-90.0, 90.0]$ and longitude $\in [-180.0, 180.0]$.
+- Validates latitude in range `[-90.0, 90.0]` and longitude in range `[-180.0, 180.0]`.
 - Verifies that discovered landmarks reside within reasonable geographic proximity to the queried parent city (rejecting rogue Overpass nodes located thousands of kilometers away).
 
 ### 3. Canonical Name Normalization & Deduplication

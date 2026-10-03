@@ -37,42 +37,50 @@ Every destination indexed in the `Place` or `HiddenGem` database maintains a dyn
 
 The score is computed through a multi-signal Bayesian weighting formula implemented in `knowledge_updater.py`:
 
-$$\text{Confidence Score} = S_{\text{base}} + W_{\text{osm}} + W_{\text{yt}} + W_{\text{reddit}} + W_{\text{blog}}$$
+```text
+Confidence Score = S_base + W_osm + W_yt + W_reddit + W_blog
+```
 
-| Signal Source | Weight ($W$) | Verification Rationale |
+| Signal Source | Weight (`W`) | Verification Rationale |
 | :--- | :---: | :--- |
-| **Base AI Hypothesis ($S_{\text{base}}$)** | `0.10` | Baseline prior assigned when an LLM synthesizes a candidate place from conversational context. |
-| **OpenStreetMap Verification ($W_{\text{osm}}$)** | `0.40` | Highest single weight. Confirms physical existence as a registered node or way in the global cartographic registry. |
-| **YouTube Vlog Mention ($W_{\text{yt}}$)** | `0.20` | Confirms real-world human travel presence with visual and timecoded proof. |
-| **Reddit Community Sentiment ($W_{\text{reddit}}$)** | `0.20` | Confirms organic peer endorsement and local recommendation threads. |
-| **Travel Blog Citation ($W_{\text{blog}}$)** | `0.10` | Confirms detailed cultural lore and editorial coverage. |
+| **Base AI Hypothesis (`S_base`)** | `0.10` | Baseline prior assigned when an LLM synthesizes a candidate place from conversational context. |
+| **OpenStreetMap Verification (`W_osm`)** | `0.40` | Highest single weight. Confirms physical existence as a registered node or way in the global cartographic registry. |
+| **YouTube Vlog Mention (`W_yt`)** | `0.20` | Confirms real-world human travel presence with visual and timecoded proof. |
+| **Reddit Community Sentiment (`W_reddit`)** | `0.20` | Confirms organic peer endorsement and local recommendation threads. |
+| **Travel Blog Citation (`W_blog`)** | `0.10` | Confirms detailed cultural lore and editorial coverage. |
 
-$$\text{Max Theoretical Score} = 0.10 + 0.40 + 0.20 + 0.20 + 0.10 = 1.00$$
+```text
+Max Theoretical Score = 0.10 + 0.40 + 0.20 + 0.20 + 0.10 = 1.00
+```
 
-Places scoring $\ge 0.70$ earn the verified **"Ghumo Recommended"** gold badge in the mobile client.
+Places scoring **≥ 0.70** earn the verified **"Ghumo Recommended"** gold badge in the mobile client.
 
 ---
 
 ## 3. Bayesian Weighted Rating Smoothing (`feedback_service.py`)
 
-Simple arithmetic averages ($\bar{x} = \frac{\sum x}{n}$) fail on crowdsourced platforms:
-- A new place with a single 5-star rating ($n=1$) naively outranks a legendary landmark with 4.8 stars across 2,000 ratings ($n=2000$).
+Simple arithmetic averages (`mean = Σx / n`) fail on crowdsourced platforms:
+- A new place with a single 5-star rating (`n = 1`) naively outranks a legendary landmark with 4.8 stars across 2,000 ratings (`n = 2000`).
 - Malicious actors can easily manipulate ratings by submitting 1-star review bombs.
 
 To prevent this distortion, Ghumo applies **Bayesian Weighted Rating Smoothing** to all community votes submitted via `POST /target-feedback`:
 
-$$W = \frac{v \cdot R + m \cdot C}{v + m}$$
+```text
+         (v · R) + (m · C)
+    W =  ─────────────────
+               v + m
+```
 
 Where:
-- $W$ = Final Bayesian weighted score.
-- $v$ = Total number of verified community ratings for this target entity.
-- $R$ = Arithmetic average of existing ratings for this entity ($\in [1.0, 5.0]$).
-- $m$ = Minimum rating threshold required for strong weight (tuned to $m = 5$ ratings).
-- $C$ = Prior mean rating across the entire geographic region (calibrated to $C = 4.0$).
+- **`W`** = Final Bayesian weighted score.
+- **`v`** = Total number of verified community ratings for this target entity.
+- **`R`** = Arithmetic average of existing ratings for this entity (in range `[1.0, 5.0]`).
+- **`m`** = Minimum rating threshold required for strong weight (tuned to `m = 5` ratings).
+- **`C`** = Prior mean rating across the entire geographic region (calibrated to `C = 4.0`).
 
 ### Behavioral Dynamics:
-1. **Low Vote Count ($v \to 0$)**: The score gently gravitates toward the regional baseline prior ($C = 4.0$), preventing rogue entries with one 5-star rating from dominating the top charts.
-2. **High Vote Count ($v \gg m$)**: The influence of the prior $m \cdot C$ diminishes, allowing true community consensus ($R$) to dictate the ranking.
+1. **Low Vote Count (`v → 0`)**: The score gently gravitates toward the regional baseline prior (`C = 4.0`), preventing rogue entries with one 5-star rating from dominating the top charts.
+2. **High Vote Count (`v ≫ m`)**: The influence of the prior `m · C` diminishes, allowing true community consensus (`R`) to dictate the ranking.
 
 ---
 
